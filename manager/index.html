@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利川旅游 - 管理后台登录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body class="bg-neutral-100">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-96">
+            <div class="text-center mb-8">
+                <i class="fa fa-map-signs text-[#165DFF] text-4xl mb-4"></i>
+                <h1 class="text-2xl font-bold text-neutral-600">管理后台登录</h1>
+                <p class="text-neutral-400 text-sm mt-2">利川旅游指南</p>
+            </div>
+            
+            <div id="error-message" class="bg-red-100 text-red-600 p-3 rounded-lg mb-4 hidden"></div>
+            
+            <form id="login-form">
+                <div class="mb-4">
+                    <label class="block text-neutral-600 mb-2">用户名</label>
+                    <input type="text" id="username" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#165DFF] focus:border-transparent" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-neutral-600 mb-2">密码</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#165DFF] focus:border-transparent" required>
+                </div>
+                
+                <button type="submit" id="login-btn" class="w-full bg-[#165DFF] hover:bg-[#165DFF]/90 text-white py-3 rounded-lg transition-colors">
+                    <i class="fa fa-sign-in mr-2"></i> 登录
+                </button>
+            </form>
+            
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-message');
+            const loginBtn = document.getElementById('login-btn');
+            
+            errorMsg.classList.add('hidden');
+            loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 登录中...';
+            loginBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorMsg.textContent = result.message || '登录失败';
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorMsg.textContent = '网络错误，请稍后重试';
+                errorMsg.classList.remove('hidden');
+            } finally {
+                loginBtn.innerHTML = '<i class="fa fa-sign-in mr-2"></i> 登录';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

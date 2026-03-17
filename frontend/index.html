@@ -1,0 +1,3258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>利川旅游指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#FF7D00',
+            accent: '#00B42A',
+            neutral: {
+              100: '#F5F7FA',
+              200: '#E4E7ED',
+              300: '#C0C4CC',
+              400: '#909399',
+              500: '#606266',
+              600: '#303133',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif']
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      }
+      .nav-shadow {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .text-balance {
+        text-wrap: balance;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .bg-gradient-primary {
+        background: linear-gradient(135deg, #165DFF 0%, #0080FF 100%);
+      }
+      .bg-gradient-secondary {
+        background: linear-gradient(135deg, #FF7D00 0%, #FFA940 100%);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    }
+    
+    /* 淡季路线选择样式 */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f8fbf9;
+      border-radius: 8px;
+    }
+    .filter-bar span {
+      color: #2d5a4f;
+      font-weight: 600;
+      margin-right: 10px;
+      align-self: center;
+    }
+    .filter-btn {
+      padding: 8px 15px;
+      border: 1px solid #2d5a4f;
+      border-radius: 20px;
+      background: white;
+      color: #2d5a4f;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-btn.active {
+      background: #2d5a4f;
+      color: white;
+    }
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .route-card {
+      border: 2px solid #e0e8e5;
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .route-card:hover {
+      border-color: #2d5a4f;
+      box-shadow: 0 6px 16px rgba(45, 90, 79, 0.15);
+    }
+    .route-card.selected {
+      border-color: #2d5a4f;
+      background-color: #f8fbf9;
+    }
+    .route-card input {
+      margin-bottom: 15px;
+      width: 18px;
+      height: 18px;
+    }
+    .route-card h3 {
+      color: #2d5a4f;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+    .route-card .duration {
+      display: inline-block;
+      background-color: #2d5a4f;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .route-card p {
+      margin: 5px 0;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .route-card .tag {
+      display: inline-block;
+      background-color: #e0e8e5;
+      color: #2d5a4f;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-top: 10px;
+      margin-right: 5px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      flex: 1;
+      padding: 15px;
+      background-color: #2d5a4f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #234a40;
+    }
+    .btn.reset {
+      background-color: #ffffff;
+      color: #2d5a4f;
+      border: 1px solid #2d5a4f;
+    }
+    .btn.reset:hover {
+      background-color: #f0f5f2;
+    }
+    .result-area {
+      margin-top: 30px;
+      padding: 20px;
+      border-top: 1px dashed #ccc;
+      display: none;
+    }
+    .result-area h3 {
+      color: #2d5a4f;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+    .result-item {
+      background-color: #f8fbf9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #2d5a4f;
+    }
+    .result-item h4 {
+      color: #2d5a4f;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    .result-item p {
+      color: #666;
+      line-height: 1.5;
+    }
+    .empty-tip {
+      text-align: center;
+      color: #999;
+      padding: 30px 0;
+      display: none;
+    }
+  </style>
+  
+  <!-- 引入更美观的字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-neutral-100 font-sans text-neutral-600">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full bg-white nav-shadow z-50 transition-all duration-300">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-map-signs text-primary text-2xl"></i>
+        <h1 class="text-xl md:text-2xl font-bold font-display text-neutral-600">利川旅游指南</h1>
+      </div>
+      
+      <!-- 桌面导航 -->
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="#attractions" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">景点</a>
+        <a href="#homestays" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">民宿</a>
+        <a href="#food" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">美食</a>
+        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">路线规划</a>
+        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">淡季路线规划</a>
+        <a href="#culture" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">文化</a>
+      </nav>
+      
+      <!-- 移动端菜单按钮 -->
+      <button id="menu-toggle" class="md:hidden text-neutral-600 hover:text-primary">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-neutral-200">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+        <a href="#attractions" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">景点</a>
+        <a href="#homestays" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">民宿</a>
+        <a href="#food" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">美食</a>
+        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">路线规划</a>
+        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">淡季路线规划</a>
+        <a href="#culture" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">文化</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 英雄区域 -->
+  <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+    <!-- 背景图片 -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://p3-doubao-search-sign.byteimg.com/mosaic-legacy/31f700034a6052b8b484~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767552&x-signature=9jDbQJci7lJek%2BsTMfedByIZlIM%3D" alt="利川风景" class="w-full h-full object-cover">
+      <!-- 渐变遮罩 -->
+      <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-3xl">
+        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold font-display text-white leading-tight mb-6 tracking-tight">
+          利川<br>
+          <span class="text-primary">中国凉爽之城</span>
+        </h1>
+        <p class="text-[clamp(1.1rem,2vw,1.4rem)] text-white/90 mb-8 max-w-2xl text-balance font-sans">探索令人惊叹的自然景观、独特的土家族文化和美味的地方美食，在这个夏季平均气温仅22℃的避暑天堂</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#attractions" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg font-medium inline-flex items-center justify-center">
+            <i class="fa fa-map-marker mr-2"></i>
+            探索景点
+          </a>
+          <a href="#custom-route" class="bg-white hover:bg-white/90 text-primary border border-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-md font-medium inline-flex items-center justify-center">
+            <i class="fa fa-route mr-2"></i>
+            定制路线
+          </a>
+        </div>
+        
+        <!-- 特色标签 -->
+        <div class="flex flex-wrap gap-3 mt-12">
+          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
+            <i class="fa fa-thermometer-half mr-2"></i>
+            <span>22℃ 清凉夏季</span>
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
+            <i class="fa fa-tree mr-2"></i>
+            <span>64% 森林覆盖率</span>
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
+            <i class="fa fa-music mr-2"></i>
+            <span>龙船调故乡</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 景点指南 -->
+  <section id="attractions" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">必游景点</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">探索利川最令人惊叹的自然奇观和文化宝藏</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 腾龙洞 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/92b4474740c44af58c9fa637946ad614~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=NWM9S4uKWWJcI%2F4XAYhA%2BHx4fVI%3D" alt="腾龙洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">腾龙洞</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">5A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">世界最大的洞穴系统，拥有壮观的"腾龙吞江"景观和激光秀表演</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:30 - 17:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥172（成人），¥97（老人）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://v.douyin.com/3qauLQx1uug/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 龙船水乡 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1fbcc2b2f958bbe22baff67d5fb3cf55~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=Hm18ICdgs%2FVacKL4Df5v9eOc3XM%3D" alt="龙船水乡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">龙船水乡</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">体验世界名曲《龙船调》的发源地，乘船穿越洞穴探索地下银河</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:00 - 17:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥120（含船票）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://v.douyin.com/i0G7dqKAXlE/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 佛宝山 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/image/99929d9608ffc028cb8c0fd201df4cb0~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=OuZaMesabaCfoZQedlWA2lGa8Po%3D" alt="佛宝山" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">佛宝山</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">茂密森林、壮观瀑布群，还有悬崖秋千和峡谷漂流等刺激活动</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:30 - 17:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥45（成人），¥22（老人）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://v.douyin.com/eeZ6KD9w5Gk/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 大水井古建筑群 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/5b5b00032b405c4041d3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=DRwM4XJYUkZhSAcxIUUozG2Q5yk%3D" alt="大水井古建筑群" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">大水井古建筑群</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">保存完好的明清古建筑群，融合土家族和西方建筑风格</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">09:00 - 17:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥50（成人）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://v.douyin.com/qkubdsguF98/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 玉龙洞 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/ba75a9f6c62566657477ca81ffab5eff~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=dkFS4IGHp7A3%2F8G8klbrPoomG3M%3D" alt="玉龙洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">玉龙洞</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">彩色钟乳石和石笋形成"地下迷宫"，拥有独特的岩石形态</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:30 - 17:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥80（成人）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://v.douyin.com/sug1H2twcjM/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 齐岳山 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/27cd648f311554864c499bcd44adaa75~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=HW4N4tsmvktMtXdz5yuJ0MDZClI%3D" alt="齐岳山" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">齐岳山</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">自然风光</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">连绵起伏的高山草原，风力发电场点缀其间，是骑马和冬季赏雪的绝佳去处</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">全天开放</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">免费</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 朝阳洞 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/395aa6c8b9f47bd72de9c8d581daa499~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=0e%2FlMvMQcmOZpP%2F9xkw2YC1XAZ8%3D" alt="朝阳洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">朝阳洞</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">3A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">利川市南坪乡的天然溶洞，洞内钟乳石形态各异，水溶洞景观优美</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">09:00 - 16:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥49.9（成人），¥29.9（儿童/学生/老人）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://touch.piao.qunar.com/touch/detail_474312993.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 朝东岩 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/2fdf128963bccede42f2606f2ea9aedd~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=2kS0ieBkhU2VmDnq3P0ryFzsReU%3D" alt="朝东岩" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">朝东岩</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">自然风光</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">位于恩施至利川之间318国道上的免费景点，春天油菜花时节，绝壁花海令人流连忘返</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">全天开放</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">免费</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 利川花千谷公园 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/adb3cebf467a2ad7e8404d426b0e8ff1~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=cwD8IlJn5SeVUAJtk4UVwR3zpFY%3D" alt="利川花千谷公园" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">利川花千谷公园</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">主题公园</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">利川市郊的花卉主题公园，四季花海盛开，是拍照打卡的好去处</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:00 - 20:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">免费开放</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 屏山峡谷 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/722f05da0bc5c547d7a81a94c07901d2~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=L6WZrAfnhlJQE3sOzs7WUd%2FqoTM%3D" alt="屏山峡谷" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">屏山峡谷</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">被CNN称为中国最美仙境，澄澈如翡翠的河水让小船仿佛悬浮在空中，人称中国仙本那</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:00 - 16:30（16:00停止入园）</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥208（含船票）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://gs.ctrip.com/html5/you/sight/jianshi2696/139198.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 地心谷 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/9d3e6f9934fd389b21e2f0392f7769f3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=rRVp5krvWJlr8WbvhQl6HkY0tRY%3D" alt="地心谷" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">地心谷</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">拥有4000年巴盐古道和悬崖玻璃栈道，穿汉服游览超有穿越感</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:00 - 15:00（上午去不晒）</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥120（含景交+扶梯）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://touch.travel.qunar.com/poi/9200505" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 狮子关彭家寨 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/0f410f2ddb07d7f643859f6dda9c1872~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=QMVBuJUX87B5wudQjsSkYEGFrxY%3D" alt="狮子关彭家寨" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">狮子关彭家寨</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">民俗文化</span>
+            </div>
+            <p class="text-sm text-neutral-500 mb-4 font-sans">全国重点文物保护单位，以土家族吊脚楼群为亮点，建筑艺术和土家文化完美结合</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">07:30 - 17:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥120</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://gs.ctrip.com/html5/you/sight/xuanen1348/140960508.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 曜天眼 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/2eae1fc57ee24ab7a8e5c24bc6f179ca~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783980&x-signature=xX6%2B6PXNGoYjGoc%2BXtawe7YsTVo%3D" alt="曜天眼" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">曜天眼</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">地质奇观</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">宣恩县锣圈岩地质公园内的天然天坑，直径620米的喀斯特天坑，阳光从顶部照射形成壮观景象</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">09:00 - 17:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥40（门票），¥80（电梯往返），¥100（套票）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://gs.ctrip.com/html5/you/sight/xuanen1348/140960508.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 鸡公岭飞拉达 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/pgc-image/ffdc602f8589411b835b7641518df94b~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=642AzFE5gWiIoh7VSQ7C%2F7ZrLnA%3D" alt="鸡公岭飞拉达" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">鸡公岭飞拉达</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">户外运动</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">建始花坪的户外攀岩基地，被誉为"中国最美飞拉达"，适合寻求刺激的游客</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">09:00 - 17:00（15:00停止入园）</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥200-420（含装备+教练）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://you.ctrip.com/sight/jianshi2696/140960508.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 梭布垭石林 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/pgc-image/8f58ecb638e74ccf810b2e65ed389822~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=eCFPcThRrHzG%2BCD8YQJ3jtmIv%2F8%3D" alt="梭布垭石林" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">梭布垭石林</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">4A级景区</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">世界第一奥陶纪石林，形成于4.6亿年前，被誉为"远古海底迷宫"</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:00 - 18:00</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">¥78（门票），¥30（观光车）</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://gs.ctrip.com/html5/you/sight/enshi1347/401292.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              预订门票
+            </a>
+          </div>
+        </div>
+        
+        <!-- 伍家台茶园 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-64 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1ae506398ec34188d0fed7cbd7b2de7a~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=%2B7IMdBKop2dKmMk%2FJauPSAP2o3U%3D" alt="伍家台茶园" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">伍家台茶园</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">文化体验</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">宣恩县万寨乡的皇家贡茶园，因乾隆皇帝赐匾"皇恩宠锡"而闻名，可体验采茶制茶</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-clock-o text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">开放时间</h4>
+                  <p class="text-sm text-neutral-500 font-sans">08:30 - 17:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-ticket text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">门票价格</h4>
+                  <p class="text-sm text-neutral-500 font-sans">免费开放</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://gs.ctrip.com/html5/you/sight/xuanen1348/140960508.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              了解详情
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 民宿推荐 -->
+  <section id="homestays" class="py-16 bg-neutral-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">魅力民宿</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">在这些精心挑选的住宿中体验地道的当地生活</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 山水民宿 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/cb6104582a1973f1b02031e3a825ad04~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=l%2BFS3L00YXqJgi%2FoBWyxuO5NRs8%3D" alt="山水民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">山水民宿</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.8</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">国家丙级旅游民宿，距腾龙洞5分钟车程，以茶文化和山景为特色</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">清江山水社区，距腾龙洞5分钟车程</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 130-3878-0709</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">国家丙级</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">茶文化</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">免费接送</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/利川山水民宿" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%B1%B1%E6%B0%B4%E6%B0%91%E5%AE%BF" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://hotels.ctrip.com/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+        
+        <!-- 凉风小舍民宿 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c2352217690aae6c3699aa8e958ea604~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=vPs08Qn3pqZ3XAkbCzxGnAAaVLw%3D" alt="凉风小舍民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">凉风小舍民宿</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.9</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">位于柏杨镇的高评分经济型民宿，可欣赏山景和日出</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">柏杨镇双利村，距利川站25.4公里</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 135-XXXX-XXXX</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">经济型</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">山景</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">免费停车</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/利川凉风小舍民宿" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%86%9B%E9%A3%8E%E5%B0%8F%E8%88%8D%E6%B0%91%E5%AE%BF" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://hotels.ctrip.com/hotels/121802263.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+        
+        <!-- 利川天墅酒店 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c28d530541fa38db1dd41f46cd1d8611~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=S4ynOdmEadd8Mu5wmefFT7E5iH4%3D" alt="利川天墅酒店" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">利川天墅酒店</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.9</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">靠近火车站的豪华四星级酒店，提供管家服务和山景房</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">利川火车站附近</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 718-7288888</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">四星级酒店</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">管家服务</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">山景</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/利川天墅酒店" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%A4%A9%E5%A3%A8%E9%85%92%E5%BA%97" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://hotels.ctrip.com/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+        
+        <!-- 山夏·星野谧境泳池度假民宿 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/b737ff14afc4933cc75fd6521d8a85ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=OBJAHP%2FGq%2FcS%2FiBqUrL9Az1UETU%3D" alt="山夏·星野谧境泳池度假民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">山夏·星野谧境</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.9</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">豪华泳池度假村，占地3000㎡，仅有18间客房，配备无边泳池、星空露台和私人温泉</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">北夷城，距利川站15分钟车程</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 138-7273-XXXX</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">无边泳池</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">星空房</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">私人温泉</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/山夏星野谧境民宿" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%B1%B1%E5%A4%8F%E6%98%9F%E9%87%8E%E8%B0%83%E5%A2%83%E6%B0%B4%E6%B3%B3%E5%BA%A6%E5%81%87%E6%B0%91%E5%AE%BF" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://hotels.ctrip.com/" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+        
+        <!-- 龙船调湖居民宿 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/b8be692453062d81538ea79b9e8022d8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=7NDGmQ9E%2B40tRQIJxEeLPiY7n%2B4%3D" alt="龙船调湖居民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">龙船调湖居</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.9</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">五星级精品民宿，位于清江河边，具有传统土家族建筑风格和文化体验</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">东城街道白雀山，距腾龙洞14.9公里</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 153-0712-3581</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">河景</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">文化体验</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">茶室</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/利川龙船调湖居民宿" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%B1%B1%E8%89%AF%E6%B0%91%E5%AE%BF" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://m.cyw.com/shop/159218605782" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+        
+        <!-- 分水度假村 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/9a9d717c1cbaa334b929e424980849ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=a57INRWn%2B0Ns7yuK1H5ZKGbGSa8%3D" alt="分水度假村" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">分水度假村</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400"></i>
+                <span class="text-neutral-500 text-sm ml-1">4.8</span>
+              </div>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">酒店式度假村，提供吊脚楼住宿，适合徒步和观光</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-map-marker text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">团堡镇分水村</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fa fa-phone text-primary mr-2"></i>
+                <span class="text-sm text-neutral-500">+86 718-7104988</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">吊脚楼</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">徒步基地</span>
+              <span class="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded-full">餐厅</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <a href="https://v.douyin.com/search/利川分水度假村" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-music mr-2"></i> 抖音
+              </a>
+              <a href="https://maps.qq.com/?type=marker&addr=%E5%88%A9%E5%B7%9D%E5%88%86%E6%B0%B4%E5%BA%A6%E5%81%87%E6%9D%91%E6%88%BF" target="_blank" class="flex items-center justify-center bg-white border border-primary text-primary py-2 rounded-lg transition-colors hover:bg-primary/5">
+                <i class="fa fa-map mr-2"></i> 腾讯地图
+              </a>
+            </div>
+            <a href="https://hotels.ctrip.com/hotels/111720531.html" target="_blank" class="block w-full bg-primary hover:bg-primary/90 text-white text-center py-2 rounded-lg transition-colors duration-300">
+              立即预订
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 特色美食 -->
+  <section id="food" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">特色美食</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">品尝土家族美食的独特风味，这些是必尝菜品</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 柏杨豆干 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/ecom-shop-material/giNoDJBe_m_0fe1ded7cf561659a57790574e226e5d_sx_901651_www800-800~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766354&x-signature=TJchjnZ2au0q9pKeS%2BA1R9aM524%3D" alt="柏杨豆干" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">柏杨豆干</h3>
+            <p class="text-neutral-500 mb-4 font-sans">拥有300年历史的非物质文化遗产，薄而香的豆干，制作方法独特</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">柏杨镇沈家豆干工坊</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">尝试卷着当地腊肉或蘸辣椒酱食用</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 利川莼菜 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/cd4028370d1f4da5b8656a9413e620c9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766353&x-signature=FV0uJuVNQeh7QQ%2BiPM82VfgMCqY%3D" alt="利川莼菜" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">利川莼菜</h3>
+            <p class="text-neutral-500 mb-4 font-sans">被誉为"水中碧螺春"，这种水生蔬菜营养丰富，口感独特滑嫩</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">佛宝山莼菜基地</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">尝试煮汤或凉拌，淋上芝麻油食用</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 根粑凉粉 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/0f1510f941a7cd83dcc1befe54660eae~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=dO8UzbDsg8ErcDzPeGYuZepEA1g%3D" alt="根粑凉粉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">根粑凉粉</h3>
+            <p class="text-neutral-500 mb-4 font-sans">清爽的夏季小吃，由蕨根制成，口感酸辣</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">南门老巷子王婆婆根粑凉粉</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">观看传统石磨制作过程</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 包面 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/16ad88432ac995fe01b55cb88b2726da~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=zdujsK%2BununcDHF4fwQngKnMBPk%3D" alt="包面" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">包面</h3>
+            <p class="text-neutral-500 mb-4 font-sans">利川人的"小确幸"，薄如纸的面皮裹着鲜嫩肉馅，浇上浓白猪骨汤</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">张嬢包面</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">撒上葱花、胡椒粉，暖身又暖心</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 杂酱面 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/1994bffa3712b95f27d68e3e9b36c7a6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=AQ6vlFCoytZQJEZ5iDajXpp2HX4%3D" alt="杂酱面" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">杂酱面</h3>
+            <p class="text-neutral-500 mb-4 font-sans">秘制肉酱+建南盐菜，酱香浓郁，咸鲜开胃</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">利川大半碗总店</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">用力拌匀，让每一根面条都裹满杂酱</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 土家烧饼 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/da95a89be2aaaf2bac8ed06db8308229~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=TvkWj9iIxcvIGdEukCIuQfSCtLs%3D" alt="土家烧饼" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">土家烧饼</h3>
+            <p class="text-neutral-500 mb-4 font-sans">贴在炉壁上烤出的金黄酥脆，夹着大块五花肉，辣中带甜</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">酱香饼坊</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">刚出炉的烧饼香气扑鼻，是最佳食用时机</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 油香儿 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/3a9bad0563899fdfca3c4b3f5a3c1de6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=o0Hx9ZENGaceo1XYtPyY2aNjrZg%3D" alt="油香儿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">油香儿</h3>
+            <p class="text-neutral-500 mb-4 font-sans">米浆裹着肉末、酸菜，炸至金黄，外酥里嫩，一口下去满口鲜香</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">东城油香儿</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">3元/个，加辣椒酱更美味</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 炸洋芋 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/5266814bc96092f8f580d01ed78123e8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Kl1Bo8fBoMkNZ8rMJGM7VyIdUyI%3D" alt="炸洋芋" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">炸洋芋</h3>
+            <p class="text-sm text-neutral-500 mb-4 font-sans">小土豆焖煎至外皮焦脆，撒上辣椒、孜然、蒜水，是利川人最爱的"解馋神器"</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">老街炸洋芋</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">用牙签戳着吃，香味十足</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 格格 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/64685123563523cd6ce6e6a2973581a4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Tzx7kT0jsBghYo8Ju5qpXq9IRjw%3D" alt="格格" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">格格</h3>
+            <p class="text-neutral-500 mb-4 font-sans">利川特色粉蒸肉，将土豆打底，再裹上一层粉的肉类，有牛肉、羊肉、肥肠、排骨等多种口味</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">永辉小吃店</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">每一份都是现做现吃，新鲜美味</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 黄凉粉 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/25ed4750b10ac7a3559ad3ef7bf8faec~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=YCLZDSzWywMNs9nNDDf3FUB3C2U%3D" alt="黄凉粉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">黄凉粉</h3>
+            <p class="text-neutral-500 mb-4 font-sans">纯天然的蕨根粉配上酸辣水，冰冰凉凉非常爽口，夏日消暑的绝佳选择</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">黄凉粉世家</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">农家老酸水、少量盐和味精，再加上一把香菜，酸辣香爽</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 渣海椒炒腊肉 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/41381049d6078473145cd31e1fbdf373~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772044&x-signature=JrBOUORSJfce%2FxpKYs3qMmmYHIo%3D" alt="渣海椒炒腊肉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">渣海椒炒腊肉</h3>
+            <p class="text-neutral-500 mb-4 font-sans">土家族传统菜肴，渣海椒酸辣开胃，腊肉香气浓郁，两者搭配相得益彰</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">老城土家族园子餐馆</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">配米饭食用，开胃下饭</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 莼菜炖老母鸡 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/e3d4fb6a0dcab8f848fd33ce9f8910e5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=tr96s9N125xvaPQmOuh7fI3ewEo%3D" alt="莼菜炖老母鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">莼菜炖老母鸡</h3>
+            <p class="text-neutral-500 mb-4 font-sans">利川特产莼菜，口感滑嫩，搭配老母鸡滋补养生，汤清味鲜</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">土家院子</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">冬季食用更佳，温补养身</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 菌之恋云南野生菌火锅 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/35af191999434a8c986a69c11a1410b4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784341&x-signature=a6%2Fmfph7bHTRmYLDunOESQfMi8U%3D" alt="菌之恋云南野生菌火锅" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">菌之恋云南野生菌火锅</h3>
+            <p class="text-neutral-500 mb-4 font-sans">汇集云南多种野生菌菇，包括松茸、牛肝菌、鸡枞菌等，汤底鲜香浓郁，营养丰富</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">菌之恋野生菌火锅（利川店）</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">先喝汤再煮菌，菌菇煮15分钟以上更安全美味</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-neutral-500 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>4.8 (236条评价)</span>
+              </div>
+              <div>
+                <span class="text-primary font-medium">人均 ¥88</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 山城柴火鸡 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/6706a437b5064661ab4def1588cc6eb9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=eB1RQ8nxp%2BIVSNL8h83iATVdmR0%3D" alt="山城柴火鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">山城柴火鸡</h3>
+            <p class="text-neutral-500 mb-4 font-sans">采用传统柴火烹饪，鸡肉鲜嫩多汁，搭配锅边馍馍，香气四溢，是土家族的传统美食</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">山城柴火鸡（利川总店）</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">锅边馍馍蘸汤汁吃更香，建议提前预订</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-neutral-500 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>4.7 (189条评价)</span>
+              </div>
+              <div>
+                <span class="text-primary font-medium">人均 ¥68</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 碎米鸡 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1359134163152404543~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=Melv8UjVzzVWeHD4KUu%2FRs9LkQM%3D" alt="碎米鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">碎米鸡</h3>
+            <p class="text-neutral-500 mb-4 font-sans">鸡肉切成碎米状，与青椒、红椒、蒜苔等配料爆炒，口感鲜香麻辣，是下饭的绝佳选择</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">利川老味道餐馆</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">搭配玉米饼或米饭食用风味更佳</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-neutral-500 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>4.6 (156条评价)</span>
+              </div>
+              <div>
+                <span class="text-primary font-medium">人均 ¥55</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 麻鸭豆皮 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/d6470dcd9b20bcfc86692c669442e751~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784398&x-signature=sFfyyhGzaeLV%2Fyg2YiQjsWGG1os%3D" alt="麻鸭豆皮" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">麻鸭豆皮</h3>
+            <p class="text-neutral-500 mb-4 font-sans">利川特色汤品，选用当地散养麻鸭与手工豆皮一同炖煮，汤汁浓郁，鸭肉酥烂，豆皮吸足汤汁</p>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">最佳品尝地点</h4>
+                  <p class="text-sm text-neutral-500 font-sans">乡村味道土家菜馆</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium font-display text-neutral-600">小贴士</h4>
+                  <p class="text-sm text-neutral-500 font-sans">撒上葱花和胡椒粉提味，冬季食用暖身</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-neutral-500 mb-4">
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>4.9 (208条评价)</span>
+              </div>
+              <div>
+                <span class="text-primary font-medium">人均 ¥62</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 用户评价 -->
+  <section id="reviews" class="py-16 bg-neutral-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">游客评价</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">看看其他游客对利川的真实评价和建议</p>
+      </div>
+      
+      <div class="max-w-6xl mx-auto">
+        <!-- 评价提交表单 -->
+        <div class="bg-white rounded-xl p-8 card-shadow mb-12">
+          <h3 class="text-2xl font-bold font-display text-neutral-600 mb-6">分享您的利川之旅</h3>
+          
+          <form id="review-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="name" class="block text-neutral-600 font-medium mb-3">您的姓名</label>
+              <input type="text" id="name" class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入您的姓名" required>
+            </div>
+            
+            <div>
+              <label for="email" class="block text-neutral-600 font-medium mb-3">电子邮箱</label>
+              <input type="email" id="email" class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入您的电子邮箱" required>
+            </div>
+            
+            <div>
+              <label for="rating" class="block text-neutral-600 font-medium mb-3">总体评分</label>
+              <div class="flex items-center space-x-2">
+                <div class="flex space-x-1">
+                  <input type="radio" id="star5" name="rating" value="5" class="hidden peer" required>
+                  <label for="star5" class="text-2xl text-neutral-300 peer-checked:text-yellow-400 cursor-pointer transition-colors">
+                    <i class="fa fa-star"></i>
+                  </label>
+                  <input type="radio" id="star4" name="rating" value="4" class="hidden peer">
+                  <label for="star4" class="text-2xl text-neutral-300 peer-checked:text-yellow-400 cursor-pointer transition-colors">
+                    <i class="fa fa-star"></i>
+                  </label>
+                  <input type="radio" id="star3" name="rating" value="3" class="hidden peer">
+                  <label for="star3" class="text-2xl text-neutral-300 peer-checked:text-yellow-400 cursor-pointer transition-colors">
+                    <i class="fa fa-star"></i>
+                  </label>
+                  <input type="radio" id="star2" name="rating" value="2" class="hidden peer">
+                  <label for="star2" class="text-2xl text-neutral-300 peer-checked:text-yellow-400 cursor-pointer transition-colors">
+                    <i class="fa fa-star"></i>
+                  </label>
+                  <input type="radio" id="star1" name="rating" value="1" class="hidden peer">
+                  <label for="star1" class="text-2xl text-neutral-300 peer-checked:text-yellow-400 cursor-pointer transition-colors">
+                    <i class="fa fa-star"></i>
+                  </label>
+                </div>
+                <span id="rating-text" class="text-neutral-500 ml-2">请选择评分</span>
+              </div>
+            </div>
+            
+            <div>
+              <label for="visited-places" class="block text-neutral-600 font-medium mb-3">您访问过的地方</label>
+              <select id="visited-places" class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                <option value="">请选择或输入</option>
+                <option value="腾龙洞">腾龙洞</option>
+                <option value="龙船水乡">龙船水乡</option>
+                <option value="佛宝山">佛宝山</option>
+                <option value="大水井古建筑群">大水井古建筑群</option>
+                <option value="玉龙洞">玉龙洞</option>
+                <option value="齐岳山">齐岳山</option>
+                <option value="清江古河床">清江古河床</option>
+                <option value="苏马荡">苏马荡</option>
+                <option value="鱼木寨">鱼木寨</option>
+                <option value="朝阳洞">朝阳洞</option>
+                <option value="朝东岩">朝东岩</option>
+                <option value="利川花千谷公园">利川花千谷公园</option>
+                <option value="屏山峡谷">屏山峡谷</option>
+                <option value="地心谷">地心谷</option>
+                <option value="狮子关彭家寨">狮子关彭家寨</option>
+                <option value="梭布垭石林">梭布垭石林</option>
+              </select>
+            </div>
+            
+            <div class="md:col-span-2">
+              <label for="review-text" class="block text-neutral-600 font-medium mb-3">您的评价</label>
+              <textarea id="review-text" rows="5" class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请分享您在利川的旅行体验、建议和感受..." required></textarea>
+            </div>
+            
+            <div class="md:col-span-2 flex items-center">
+              <input type="checkbox" id="privacy-consent" class="form-checkbox h-4 w-4 text-primary rounded mr-2" required>
+              <label for="privacy-consent" class="text-sm text-neutral-500">我同意根据<a href="#" class="text-primary hover:underline">隐私政策</a>处理我的个人数据</label>
+            </div>
+            
+            <div class="md:col-span-2 text-center">
+              <button type="submit" id="submit-review" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg transition-colors duration-300 font-medium">
+                <i class="fa fa-paper-plane mr-2"></i> 提交评价
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- 评价列表 -->
+        <div id="reviews-container">
+          <!-- 评价将通过JavaScript动态加载 -->
+          <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+            <p class="text-neutral-600">正在加载游客评价...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 自定义路线生成器 -->
+  <section id="custom-route" class="py-16 bg-neutral-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">创建您的专属路线</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">告诉我们您的偏好，我们将为您生成个性化的旅行计划</p>
+      </div>
+      
+      <div class="max-w-4xl mx-auto bg-white rounded-xl p-8 card-shadow">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-6">您的偏好</h3>
+            
+            <div class="space-y-6">
+              <!-- 景点类型 -->
+              <div>
+                <label class="block text-neutral-600 font-medium mb-3">景点类型</label>
+                <div class="flex flex-wrap gap-3">
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="natural">
+                    <span>自然景观</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="cultural">
+                    <span>文化景点</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="cave">
+                    <span>洞穴</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="historical">
+                    <span>历史建筑</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="ancient_town">
+                    <span>古镇古村</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="water">
+                    <span>水域风光</span>
+                  </label>
+                </div>
+              </div>
+              
+              <!-- 交通方式 -->
+              <div>
+                <label class="block text-neutral-600 font-medium mb-3">交通方式</label>
+                <div class="flex flex-wrap gap-3">
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="transport" class="form-radio h-4 w-4 text-primary mr-2" value="car">
+                    <span>私家车</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="transport" class="form-radio h-4 w-4 text-primary mr-2" value="taxi">
+                    <span>出租车</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="transport" class="form-radio h-4 w-4 text-primary mr-2" value="bus">
+                    <span>公共汽车</span>
+                  </label>
+                </div>
+              </div>
+              
+              <!-- 旅行天数 -->
+              <div>
+                <label for="days" class="block text-neutral-600 font-medium mb-3">旅行天数</label>
+                <input type="number" id="days" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="例如：2" min="1" max="7">
+              </div>
+              
+              <!-- 旅行风格 -->
+              <div>
+                <label class="block text-neutral-600 font-medium mb-3">旅行风格</label>
+                <div class="flex flex-wrap gap-3">
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="style" class="form-radio h-4 w-4 text-primary mr-2" value="leisure" checked>
+                    <span>休闲舒适</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="style" class="form-radio h-4 w-4 text-primary mr-2" value="adventure">
+                    <span>探险刺激</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="radio" name="style" class="form-radio h-4 w-4 text-primary mr-2" value="cultural">
+                    <span>文化体验</span>
+                  </label>
+                </div>
+              </div>
+              
+              <!-- 特殊兴趣 -->
+              <div>
+                <label class="block text-neutral-600 font-medium mb-3">特殊兴趣</label>
+                <div class="flex flex-wrap gap-3">
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="food">
+                    <span>当地美食</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="culture">
+                    <span>土家族文化</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="photography">
+                    <span>摄影</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="relaxation">
+                    <span>休闲放松</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="adventure">
+                    <span>探险体验</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="shopping">
+                    <span>特产购物</span>
+                  </label>
+                  <label class="flex items-center bg-neutral-100 hover:bg-primary/10 px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" class="form-checkbox h-4 w-4 text-primary rounded mr-2" value="family">
+                    <span>亲子活动</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-bold font-display text-neutral-600 mb-6">您的专属路线</h3>
+            
+            <div id="route-output" class="bg-neutral-50 rounded-lg p-6 min-h-[400px]">
+              <div class="text-center text-neutral-500">
+                <i class="fa fa-map-o text-4xl mb-4"></i>
+                <p>请选择您的偏好并点击"生成路线"查看您的个性化旅行计划</p>
+              </div>
+            </div>
+            
+            <button id="generate-route" class="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg transition-colors duration-300 font-medium mt-6">
+              生成路线
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 淡季路线选择区域（已修复） -->
+      <div class="container mx-auto px-4 mt-16">
+        <h3 class="text-2xl font-bold font-display text-neutral-600 mb-6 text-center">利川淡季游玩路线选择</h3>
+        
+        <!-- 时长筛选栏 -->
+        <div class="filter-bar">
+          <span>按时长筛选：</span>
+          <button class="filter-btn active" data-duration="all">全部</button>
+          <button class="filter-btn" data-duration="2天1晚">2天1晚</button>
+          <button class="filter-btn" data-duration="3天2晚">3天2晚</button>
+          <button class="filter-btn" data-duration="4天3晚">4天3晚</button>
+          <button class="filter-btn" data-duration="5天4晚">5天4晚</button>
+        </div>
+
+        <!-- 路线卡片网格 -->
+        <div class="routes-grid" id="routesGrid">
+          <!-- 路线1：溶洞康养休闲线 -->
+          <div class="route-card" data-duration="3天2晚">
+            <input type="checkbox" id="route1" name="route" value="溶洞康养休闲线">
+            <label for="route1"></label>
+            <span class="duration">3天2晚</span>
+            <h3>溶洞康养休闲线</h3>
+            <p><strong>适合人群：</strong>家庭/中老年</p>
+            <p><strong>核心亮点：</strong>腾龙洞+龙船水乡+大水井，洞内恒温14-18℃，慢节奏康养体验，冬季人少景美。</p>
+            <span class="tag">家庭游</span>
+            <span class="tag">康养</span>
+            <span class="tag">溶洞</span>
+          </div>
+
+          <!-- 路线2：小众摄影徒步线 -->
+          <div class="route-card" data-duration="3天2晚">
+            <input type="checkbox" id="route2" name="route" value="小众摄影徒步线">
+            <label for="route2"></label>
+            <span class="duration">3天2晚</span>
+            <h3>小众摄影徒步线</h3>
+            <p><strong>适合人群：</strong>年轻/摄影爱好者</p>
+            <p><strong>核心亮点：</strong>齐岳山雪景+清江古河床+佛宝山冰瀑，冬季限定美景，轻徒步+摄影创作。</p>
+            <span class="tag">摄影</span>
+            <span class="tag">徒步</span>
+            <span class="tag">雪景</span>
+          </div>
+
+          <!-- 路线3：民俗年味体验线 -->
+          <div class="route-card" data-duration="2天1晚">
+            <input type="checkbox" id="route3" name="route" value="民俗年味体验线">
+            <label for="route3"></label>
+            <span class="duration">2天1晚</span>
+            <h3>民俗年味体验线</h3>
+            <p><strong>适合人群：</strong>文化爱好者</p>
+            <p><strong>核心亮点：</strong>冬季限定年猪宴、打糍粑、土家摆手舞，沉浸式体验地道土家年俗文化。</p>
+            <span class="tag">民俗</span>
+            <span class="tag">年味</span>
+            <span class="tag">文化体验</span>
+          </div>
+
+          <!-- 路线4：轻量周末短线 -->
+          <div class="route-card" data-duration="2天1晚">
+            <input type="checkbox" id="route4" name="route" value="轻量周末短线">
+            <label for="route4"></label>
+            <span class="duration">2天1晚</span>
+            <h3>轻量周末短线</h3>
+            <p><strong>适合人群：</strong>城市周边游</p>
+            <p><strong>核心亮点：</strong>腾龙洞+龙船水乡核心景点，搭配柏杨豆干、腊猪蹄火锅，节奏轻松不赶场。</p>
+            <span class="tag">周末游</span>
+            <span class="tag">轻松</span>
+            <span class="tag">美食</span>
+          </div>
+
+          <!-- 路线5：康养避寒长线 -->
+          <div class="route-card" data-duration="5天4晚">
+            <input type="checkbox" id="route5" name="route" value="康养避寒长线">
+            <label for="route5"></label>
+            <span class="duration">5天4晚</span>
+            <h3>康养避寒长线</h3>
+            <p><strong>适合人群：</strong>退休/康养人群</p>
+            <p><strong>核心亮点：</strong>苏马荡地暖民宿+清江源温泉+乡村慢生活，每日轻徒步+养生餐，避寒康养两不误。</p>
+            <span class="tag">康养</span>
+            <span class="tag">避寒</span>
+            <span class="tag">长线游</span>
+          </div>
+
+          <!-- 路线6：非遗文化深度线 -->
+          <div class="route-card" data-duration="3天2晚">
+            <input type="checkbox" id="route6" name="route" value="非遗文化深度线">
+            <label for="route6"></label>
+            <span class="duration">3天2晚</span>
+            <h3>非遗文化深度线</h3>
+            <p><strong>适合人群：</strong>亲子/文化研学</p>
+            <p><strong>核心亮点：</strong>柏杨豆干手工制作+毛坝漆器体验+龙船调非遗研学，动手体验土家非遗文化。</p>
+            <span class="tag">非遗</span>
+            <span class="tag">亲子</span>
+            <span class="tag">研学</span>
+          </div>
+
+          <!-- 路线7：自驾环线探索线 -->
+          <div class="route-card" data-duration="4天3晚">
+            <input type="checkbox" id="route7" name="route" value="自驾环线探索线">
+            <label for="route7"></label>
+            <span class="duration">4天3晚</span>
+            <h3>自驾环线探索线</h3>
+            <p><strong>适合人群：</strong>自驾爱好者</p>
+            <p><strong>核心亮点：</strong>利川-谋道-忠路-建南环线，打卡小众乡村、古村落、茶园，体验原生态土家生活。</p>
+            <span class="tag">自驾</span>
+            <span class="tag">环线</span>
+            <span class="tag">小众</span>
+          </div>
+
+          <!-- 路线8：亲子趣味体验线 -->
+          <div class="route-card" data-duration="2天1晚">
+            <input type="checkbox" id="route8" name="route" value="亲子趣味体验线">
+            <label for="route8"></label>
+            <span class="duration">2天1晚</span>
+            <h3>亲子趣味体验线</h3>
+            <p><strong>适合人群：</strong>亲子家庭</p>
+            <p><strong>核心亮点：</strong>腾龙洞趣味溶洞探险+手工糍粑制作+乡村萌宠互动，轻松有趣的亲子时光。</p>
+            <span class="tag">亲子</span>
+            <span class="tag">趣味</span>
+            <span class="tag">互动</span>
+          </div>
+        </div>
+
+        <!-- 按钮组 -->
+        <div class="btn-group">
+          <button class="btn" onclick="showSelectedRoutes()">查看所选路线</button>
+          <button class="btn reset" onclick="resetSelection()">重置选择</button>
+        </div>
+
+        <!-- 无结果提示 -->
+        <div class="empty-tip" id="emptyTip">暂无符合条件的路线</div>
+
+        <!-- 结果展示区 -->
+        <div class="result-area" id="resultArea">
+          <h3>您选择的路线：</h3>
+          <div id="selectedRoutes"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 民俗文化 -->
+  <section id="culture" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">土家族文化与传统</h2>
+        <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">沉浸在利川原住民丰富的文化遗产中</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- 龙船调 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/f831fad9edabfd14d71e8b930980ce76~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=1QBbPcS9SgtSZK9bEs9EUv7VziU%3D" alt="龙船调表演" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">龙船调</h3>
+              <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">世界非遗民歌</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">源自利川柏杨坝的世界著名民歌，被联合国教科文组织评为世界25首优秀民歌之一，被誉为"土家文化的活化石"</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-info-circle text-primary"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">起源于《灯歌·种瓜调》，描绘了土家幺妹过河的生动场景</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-music text-primary"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">2004年宋祖英在维也纳金色大厅演唱，使龙船调响彻世界</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://www.hubei.gov.cn/jmct/jcwh/mg/201507/t20150701_1679147.shtml" target="_blank" class="flex items-center text-primary hover:text-primary/80 transition-colors">
+              <i class="fa fa-volume-up mr-2"></i>
+              <span class="font-medium">聆听经典旋律</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 肉连响 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/fb493f533db64317bd5c77f8b76e13c5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=Sr5DVnowDOkmmgcDag8xOCEQcyQ%3D" alt="肉连响表演" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">肉连响</h3>
+              <span class="bg-secondary/10 text-secondary text-xs px-2 py-1 rounded-full">东方迪斯科</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">利川土家族独特的民间舞蹈，以手掌击打身体各部位发出有节奏的响声而得名，2008年列入国家级非物质文化遗产</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-start">
+                <div class="bg-secondary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-history text-secondary"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">源自旧社会乞讨者的"泥神道"，后经民间艺人吴修富整理发展</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-secondary/10 p-2 rounded-full mr-3">
+                  <i class="fa fa-hand-paper-o text-secondary"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">主要动作有"秧歌步"、"十响"、"七响"、"四响"等十几种</p>
+                </div>
+              </div>
+            </div>
+            <a href="https://enshi-szwhg.chaoxing.com/portal/feiyi/read?id=24&nid=43" target="_blank" class="flex items-center text-secondary hover:text-secondary/80 transition-colors">
+              <i class="fa fa-play-circle mr-2"></i>
+              <span class="font-medium">观看精彩表演</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 利川灯歌 -->
+        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/524ec6993f754c7c85483f748a003809~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=EeCEAKfSUjBBqG3Anb5%2BAxaEyHU%3D" alt="利川灯歌" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+          </div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xl font-bold font-display text-neutral-600">利川灯歌</h3>
+              <span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">国家级非遗</span>
+            </div>
+            <p class="text-neutral-500 mb-4 font-sans">起源于利川柏杨坝镇，已有300余年历史，2011年列入国家级非物质文化遗产名录，是歌唱、锣鼓、舞蹈的融合统一</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3">
+                  <i class="fa fa-calendar text-green-600"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">与春节习俗密切相关，"三十晚上的火，十五晚上的灯"</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3">
+                  <i class="fa fa-users text-green-600"></i>
+                </div>
+                <div>
+                  <p class="text-sm text-neutral-500">现有表演人员108人，传承基地3处，2025年表演180余场次</p>
+                </div>
+              </div>
+            </div>
+            <a href="http://www.lichuan.gov.cn/xwdt/bdyw/202603/t20260306_1786638.shtml" target="_blank" class="flex items-center text-green-600 hover:text-green-700 transition-colors">
+              <i class="fa fa-info-circle mr-2"></i>
+              <span class="font-medium">了解更多文化</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 文化体验 -->
+      <div class="mt-12 bg-neutral-50 rounded-xl p-8 card-shadow">
+        <h3 class="text-2xl font-bold font-display text-neutral-600 mb-6 text-center">文化体验</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white rounded-lg p-6 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-cutlery text-primary text-xl"></i>
+            </div>
+            <h4 class="text-lg font-bold font-display text-neutral-600 mb-2">制作豆干</h4>
+            <p class="text-neutral-500 text-sm">在当地工坊体验制作柏杨豆干的传统工艺</p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-6 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-leaf text-primary text-xl"></i>
+            </div>
+            <h4 class="text-lg font-bold font-display text-neutral-600 mb-2">采摘莼菜</h4>
+            <p class="text-neutral-500 mb-4 font-sans">在佛宝山莼菜基地尝试采摘这种独特的水生蔬菜</p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-6 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-paint-brush text-primary text-xl"></i>
+            </div>
+            <h4 class="text-lg font-bold font-display text-neutral-600 mb-2">土家族刺绣</h4>
+            <p class="text-neutral-500 text-sm">学习传统土家族刺绣图案和技巧的基础知识</p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-6 hover:shadow-lg transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-music text-primary text-xl"></i>
+            </div>
+            <h4 class="text-lg font-bold font-display text-neutral-600 mb-2">民歌表演</h4>
+            <p class="text-neutral-500 text-sm">在文化场所欣赏地道的土家族民歌和舞蹈</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部区域 -->
+  <footer class="bg-neutral-600 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center space-x-2 mb-6">
+            <i class="fa fa-map-signs text-white text-2xl"></i>
+            <h3 class="text-xl font-bold font-display">利川旅游指南</h3>
+          </div>
+          <p class="text-neutral-300 mb-4">您探索中国美丽城市利川的综合指南</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-white hover:text-primary transition-colors">
+              <i class="fa fa-weixin text-xl"></i>
+            </a>
+            <a href="#" class="text-white hover:text-primary transition-colors">
+              <i class="fa fa-weibo text-xl"></i>
+            </a>
+            <a href="#" class="text-white hover:text-primary transition-colors">
+              <i class="fa fa-instagram text-xl"></i>
+            </a>
+            <a href="#" class="text-white hover:text-primary transition-colors">
+              <i class="fa fa-youtube-play text-xl"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold font-display mb-6">快速链接</h4>
+          <ul class="space-y-3">
+            <li><a href="#attractions" class="text-neutral-300 hover:text-white transition-colors">景点</a></li>
+            <li><a href="#homestays" class="text-neutral-300 hover:text-white transition-colors">民宿</a></li>
+            <li><a href="#food" class="text-neutral-300 hover:text-white transition-colors">美食</a></li>
+            <li><a href="#custom-route" class="text-neutral-300 hover:text-white transition-colors">路线规划</a></li>
+            <li><a href="#culture" class="text-neutral-300 hover:text-white transition-colors">文化</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold font-display mb-6">实用信息</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">交通方式</a></li>
+            <li><a href="https://www.tianqi.com/lichuan/" class="text-neutral-300 hover:text-white transition-colors">天气</a></li>
+            <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">安全提示</a></li>
+            <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">常见问题</a></li>
+            <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">联系我们</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold font-display mb-6">联系我们</h4>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+              <span class="text-neutral-300">中国湖北省恩施州利川市</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-phone text-primary mr-3"></i>
+              <span class="text-neutral-300">XXX-XXXX-XXXX</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-envelope text-primary mr-3"></i>
+              <span class="text-neutral-300">XXX@example.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-neutral-500 mt-8 pt-8 text-center">
+        <p class="text-neutral-400">&copy; 2026 利川旅游指南. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 移动端菜单切换
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 导航栏滚动效果
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-white/95', 'backdrop-blur-sm');
+      } else {
+        navbar.classList.remove('bg-white/95', 'backdrop-blur-sm');
+      }
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          const mobileMenu = document.getElementById('mobile-menu');
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+          }
+        }
+      });
+    });
+    
+    // ============ 评论系统代码 ============
+    
+    // 等待页面加载完成
+    (function() {
+      // 1. 评价表单提交处理
+      const reviewForm = document.getElementById('review-form');
+      if (reviewForm) {
+        reviewForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          // 获取表单数据
+          const formData = {
+            name: document.getElementById('name')?.value || '',
+            email: document.getElementById('email')?.value || '',
+            rating: document.querySelector('input[name="rating"]:checked')?.value,
+            visited_place: document.getElementById('visited-places')?.value || '',
+            review_text: document.getElementById('review-text')?.value || '',
+            privacy_consent: document.getElementById('privacy-consent')?.checked || false
+          };
+          
+          if (!formData.rating) {
+            alert('请选择评分');
+            return;
+          }
+          
+          const submitBtn = document.getElementById('submit-review');
+          const originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 提交中...';
+          submitBtn.disabled = true;
+          
+          try {
+            const response = await fetch('/api/reviews', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              alert('评价提交成功！等待管理员审核后即可显示。');
+              reviewForm.reset();
+              document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+              const ratingText = document.getElementById('rating-text');
+              if (ratingText) ratingText.textContent = '请选择评分';
+            } else {
+              alert(result.message || '提交失败，请稍后重试');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('网络错误，请稍后重试');
+          } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          }
+        });
+      }
+      
+      // 2. 加载评价列表
+      async function loadReviews() {
+        const container = document.getElementById('reviews-container');
+        if (!container) return;
+        
+        try {
+          const response = await fetch('/api/reviews?page=1&limit=10');
+          const result = await response.json();
+          
+          if (result.success && result.data.length > 0) {
+            let reviewsHTML = '<div class="space-y-6">';
+            
+            result.data.forEach(review => {
+              reviewsHTML += `
+                <div class="bg-white rounded-lg p-6 card-shadow">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 class="font-bold text-neutral-600">${review.name}</h4>
+                      <p class="text-sm text-neutral-400">${review.created_at}</p>
+                    </div>
+                    <div class="flex items-center">
+                      ${generateStars(review.rating)}
+                    </div>
+                  </div>
+                  ${review.visited_place ? `
+                    <p class="text-sm text-primary mb-2">访问地点：${review.visited_place}</p>
+                  ` : ''}
+                  <p class="text-neutral-600">${review.review_text}</p>
+                </div>
+              `;
+            });
+            
+            reviewsHTML += '</div>';
+            container.innerHTML = reviewsHTML;
+          } else {
+            container.innerHTML = `
+              <div class="text-center py-12">
+                <i class="fa fa-comments-o text-4xl text-neutral-300 mb-4"></i>
+                <p class="text-neutral-500">暂无评价，来分享您的利川之旅吧！</p>
+              </div>
+            `;
+          }
+        } catch (error) {
+          console.error('Error loading reviews:', error);
+          container.innerHTML = `
+            <div class="text-center py-12">
+              <i class="fa fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+              <p class="text-red-500">加载评价失败，请稍后重试</p>
+            </div>
+          `;
+        }
+      }
+      
+      // 生成星星
+      function generateStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+          stars += i <= rating 
+            ? '<i class="fa fa-star text-yellow-400"></i>'
+            : '<i class="fa fa-star-o text-neutral-300"></i>';
+        }
+        return stars;
+      }
+      
+      // 评分选择交互
+      document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const ratingText = document.getElementById('rating-text');
+          const ratings = ['', '非常差', '差', '一般', '好', '非常好'];
+          if (ratingText) ratingText.textContent = ratings[this.value];
+        });
+      });
+      
+      // 初始加载评价
+      loadReviews();
+    })();
+    
+    // 自定义路线生成器
+    document.getElementById('generate-route').addEventListener('click', function() {
+      // 获取用户选择的景点类型
+      const attractionTypes = [];
+      document.querySelectorAll('input[type="checkbox"][value="natural"], input[type="checkbox"][value="cultural"], input[type="checkbox"][value="cave"], input[type="checkbox"][value="historical"], input[type="checkbox"][value="ancient_town"], input[type="checkbox"][value="water"]').forEach(checkbox => {
+        if (checkbox.checked) {
+          attractionTypes.push(checkbox.value);
+        }
+      });
+      
+      // 获取选择的交通方式
+      const transport = document.querySelector('input[name="transport"]:checked')?.value || 'car';
+      
+      // 获取旅行天数
+      const days = parseInt(document.getElementById('days').value) || 2;
+      
+      // 获取旅行风格
+      const style = document.querySelector('input[name="style"]:checked')?.value || 'leisure';
+      
+      // 获取特殊兴趣
+      const interests = [];
+      document.querySelectorAll('input[type="checkbox"][value="food"], input[type="checkbox"][value="culture"], input[type="checkbox"][value="photography"], input[type="checkbox"][value="relaxation"], input[type="checkbox"][value="adventure"], input[type="checkbox"][value="shopping"], input[type="checkbox"][value="family"]').forEach(checkbox => {
+        if (checkbox.checked) {
+          interests.push(checkbox.value);
+        }
+      });
+      
+      // 根据用户选择生成路线
+      const routeOutput = document.getElementById('route-output');
+      
+      if (attractionTypes.length === 0) {
+        routeOutput.innerHTML = `
+          <div class="text-center text-neutral-500">
+            <i class="fa fa-exclamation-circle text-4xl mb-4 text-red-500"></i>
+            <p>请至少选择一种景点类型</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // 显示加载动画
+      routeOutput.innerHTML = `
+        <div class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+          <p class="text-neutral-600">正在为您生成专属旅行路线...</p>
+        </div>
+      `;
+      
+      // 模拟API调用延迟
+      setTimeout(() => {
+        // 景点数据库
+        const attractions = {
+          cave: [
+            { name: '腾龙洞', description: '探索世界最大的洞穴系统，观看激光秀表演', time: '3-4小时' },
+            { name: '玉龙洞', description: '探索色彩斑斓的钟乳石和独特的岩石形态', time: '2-3小时' },
+            { name: '朝阳洞', description: '洞内钟乳石形态各异，水溶洞景观优美', time: '2小时' }
+          ],
+          natural: [
+            { name: '佛宝山', description: '徒步穿越茂密森林，欣赏壮观瀑布群', time: '4-5小时' },
+            { name: '齐岳山', description: '探索连绵起伏的高山草原，欣赏美丽的自然风光', time: '3-4小时' },
+            { name: '清江古河床', description: '徒步探索古老的河床，欣赏独特的地质景观', time: '5-6小时' },
+            { name: '苏马荡', description: '避暑胜地，森林覆盖率高，空气清新', time: '3-4小时' },
+            { name: '朝东岩', description: '春天油菜花时节，绝壁花海令人流连忘返', time: '2-3小时' },
+            { name: '利川花千谷公园', description: '四季花海盛开，是拍照打卡的好去处', time: '2小时' }
+          ],
+          cultural: [
+            { name: '龙船水乡', description: '体验著名龙船调的发源地，乘船游览洞穴', time: '3-4小时' },
+            { name: '鱼木寨', description: '保存完好的土家族古村落，体验原生态土家族文化', time: '3-4小时' }
+          ],
+          historical: [
+            { name: '大水井古建筑群', description: '参观保存完好的明清古建筑群', time: '2-3小时' },
+            { name: '屏山峡谷', description: '被誉为"中国的仙本那"，风景如画', time: '4-5小时' },
+            { name: '地心谷', description: '峡谷幽深，风景独特，适合徒步探险', time: '4-5小时' },
+            { name: '狮子关彭家寨', description: '土家族传统村落，吊脚楼群保存完好', time: '3小时' },
+            { name: '梭布垭石林', description: '4A级景区，独特的喀斯特地貌', time: '4-5小时' }
+          ],
+          water: [
+            { name: '龙船水乡', description: '乘船穿越洞穴探索地下银河', time: '3-4小时' },
+            { name: '清江古河床', description: '沿清江徒步，欣赏两岸风光', time: '5-6小时' }
+          ],
+          ancient_town: [
+            { name: '鱼木寨', description: '保存完好的土家族古村落', time: '3-4小时' },
+            { name: '大水井古建筑群', description: '明清时期的古建筑群', time: '2-3小时' },
+            { name: '狮子关彭家寨', description: '传统土家族村落', time: '3小时' }
+          ]
+        };
+        
+        // 美食推荐
+        const foodRecommendations = [
+          { name: '柏杨豆干', place: '柏杨镇沈家豆干工坊', description: '300年历史的非物质文化遗产' },
+          { name: '利川莼菜', place: '佛宝山莼菜基地', description: '被誉为"水中碧螺春"' },
+          { name: '根粑凉粉', place: '南门老巷子王婆婆根粑凉粉', description: '清爽的夏季小吃' },
+          { name: '包面', place: '张嬢包面', description: '利川人的"小确幸"' },
+          { name: '杂酱面', place: '利川大半碗总店', description: '秘制肉酱+建南盐菜' },
+          { name: '菌之恋云南野生菌火锅', place: '菌之恋野生菌火锅（利川店）', description: '汇集多种野生菌菇，汤底鲜香浓郁' },
+          { name: '山城柴火鸡', place: '山城柴火鸡（利川总店）', description: '传统柴火烹饪，鸡肉鲜嫩多汁' },
+          { name: '碎米鸡', place: '利川老味道餐馆', description: '鲜香麻辣，下饭神器' },
+          { name: '麻鸭豆皮', place: '乡村味道土家菜馆', description: '汤汁浓郁，鸭肉酥烂' }
+        ];
+        
+        // 文化体验
+        const cultureExperiences = [
+          { name: '龙船调表演', description: '欣赏世界非遗民歌龙船调表演' },
+          { name: '肉连响体验', description: '学习土家族独特的民间舞蹈' },
+          { name: '土家族刺绣', description: '学习传统土家族刺绣技艺' },
+          { name: '制作豆干', description: '体验制作柏杨豆干的传统工艺' },
+          { name: '采摘莼菜', description: '在佛宝山莼菜基地尝试采摘' }
+        ];
+        
+        // 生成路线
+        let routeHTML = '';
+        let usedAttractions = new Set();
+        
+        // 根据天数生成行程
+        for (let day = 1; day <= days; day++) {
+          routeHTML += `
+            <div class="mb-8">
+              <div class="flex items-center mb-4">
+                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3">
+                  <span class="font-bold">${day}</span>
+                </div>
+                <h4 class="text-xl font-bold font-display text-neutral-600">第${day}天</h4>
+              </div>
+              <div class="space-y-5 pl-11">
+          `;
+          
+          // 上午活动
+          routeHTML += `
+            <div class="relative">
+              <div class="absolute left-0 top-2 w-4 h-4 bg-primary rounded-full -ml-2"></div>
+              <div class="bg-white rounded-lg p-5 shadow-sm border border-neutral-100">
+                <h5 class="text-lg font-semibold font-display text-neutral-600 mb-2">上午</h5>
+          `;
+          
+          // 根据景点类型和旅行风格选择景点
+          let morningAttraction = null;
+          let availableTypes = [...attractionTypes];
+          
+          // 根据旅行风格调整景点选择优先级
+          if (style === 'adventure') {
+            // 探险风格优先选择自然景观和洞穴
+            availableTypes = availableTypes.sort((a, b) => {
+              if (a === 'natural' || a === 'cave') return -1;
+              if (b === 'natural' || b === 'cave') return 1;
+              return 0;
+            });
+          } else if (style === 'cultural') {
+            // 文化风格优先选择文化和历史景点
+            availableTypes = availableTypes.sort((a, b) => {
+              if (a === 'cultural' || a === 'historical' || a === 'ancient_town') return -1;
+              if (b === 'cultural' || b === 'historical' || b === 'ancient_town') return 1;
+              return 0;
+            });
+          }
+          
+          // 选择上午景点
+          for (const type of availableTypes) {
+            const typeAttractions = attractions[type] || [];
+            const availableAttractions = typeAttractions.filter(att => !usedAttractions.has(att.name));
+            
+            if (availableAttractions.length > 0) {
+              // 根据旅行风格选择合适的景点
+              if (style === 'leisure' && availableAttractions.length > 1) {
+                // 休闲风格选择耗时较短的景点
+                morningAttraction = availableAttractions.sort((a, b) => {
+                  const timeA = parseInt(a.time.split('-')[0]);
+                  const timeB = parseInt(b.time.split('-')[0]);
+                  return timeA - timeB;
+                })[0];
+              } else if (style === 'adventure' && availableAttractions.length > 1) {
+                // 探险风格选择耗时较长的景点
+                morningAttraction = availableAttractions.sort((a, b) => {
+                  const timeA = parseInt(a.time.split('-')[1]);
+                  const timeB = parseInt(b.time.split('-')[1]);
+                  return timeB - timeA;
+                })[0];
+              } else {
+                morningAttraction = availableAttractions[0];
+              }
+              
+              usedAttractions.add(morningAttraction.name);
+              break;
+            }
+          }
+          
+          if (morningAttraction) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-map-marker text-primary"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">${morningAttraction.name}</h6>
+                  <p class="text-sm text-neutral-500 mt-1">${morningAttraction.description}</p>
+                  <div class="flex items-center mt-2 text-xs text-neutral-400">
+                    <i class="fa fa-clock-o mr-1"></i>
+                    <span>建议游览时间: ${morningAttraction.time}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+          
+          routeHTML += `
+              </div>
+            </div>
+          `;
+          
+          // 午餐
+          routeHTML += `
+            <div class="relative">
+              <div class="absolute left-0 top-2 w-4 h-4 bg-secondary rounded-full -ml-2"></div>
+              <div class="bg-white rounded-lg p-5 shadow-sm border border-neutral-100">
+                <h5 class="text-lg font-semibold font-display text-neutral-600 mb-2">午餐</h5>
+          `;
+          
+          if (interests.includes('food') && foodRecommendations.length > 0) {
+            // 随机选择一个美食推荐
+            const randomFood = foodRecommendations[Math.floor(Math.random() * foodRecommendations.length)];
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-secondary/10 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-cutlery text-secondary"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">${randomFood.name}</h6>
+                  <p class="text-sm text-neutral-500 mt-1">${randomFood.description}</p>
+                  <div class="flex items-center mt-2 text-xs text-neutral-400">
+                    <i class="fa fa-map-marker mr-1"></i>
+                    <span>推荐地点: ${randomFood.place}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-secondary/10 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-cutlery text-secondary"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">当地餐厅</h6>
+                  <p class="text-sm text-neutral-500 mt-1">在景区附近的餐厅享用午餐，品尝当地特色美食</p>
+                </div>
+              </div>
+            `;
+          }
+          
+          routeHTML += `
+              </div>
+            </div>
+          `;
+          
+          // 下午活动
+          routeHTML += `
+            <div class="relative">
+              <div class="absolute left-0 top-2 w-4 h-4 bg-green-500 rounded-full -ml-2"></div>
+              <div class="bg-white rounded-lg p-5 shadow-sm border border-neutral-100">
+                <h5 class="text-lg font-semibold font-display text-neutral-600 mb-2">下午</h5>
+          `;
+          
+          // 根据兴趣选择下午活动
+          if (interests.includes('culture') && cultureExperiences.length > 0) {
+            const randomCulture = cultureExperiences[Math.floor(Math.random() * cultureExperiences.length)];
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-music text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">${randomCulture.name}</h6>
+                  <p class="text-sm text-neutral-500 mt-1">${randomCulture.description}</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('photography')) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-camera text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">摄影之旅</h6>
+                  <p class="text-sm text-neutral-500 mt-1">探访利川最佳摄影地点，捕捉绝美风景。推荐齐岳山日落和清江晨雾。</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('relaxation')) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-leaf text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">休闲放松</h6>
+                  <p class="text-sm text-neutral-500 mt-1">在苏马荡或齐岳山的茶园中放松身心，体验传统茶道，享受宁静时光。</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('shopping')) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-shopping-bag text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">特产购物</h6>
+                  <p class="text-sm text-neutral-500 mt-1">前往利川市区的特产商店，购买利川红茶、柏杨豆干、莼菜等当地特产。</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('adventure')) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-bolt text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">探险体验</h6>
+                  <p class="text-sm text-neutral-500 mt-1">体验佛宝山峡谷漂流或鸡公岭飞拉达攀岩，感受刺激的户外活动。</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('family')) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-child text-green-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">亲子活动</h6>
+                  <p class="text-sm text-neutral-500 mt-1">前往利川花千谷公园或齐岳山草原，参与适合全家的户外活动和游戏。</p>
+                </div>
+              </div>
+            `;
+          } else {
+            // 如果没有特殊兴趣，继续游览景点
+            let afternoonAttraction = null;
+            
+            for (const type of availableTypes) {
+              const typeAttractions = attractions[type] || [];
+              const availableAttractions = typeAttractions.filter(att => !usedAttractions.has(att.name));
+              
+              if (availableAttractions.length > 0) {
+                afternoonAttraction = availableAttractions[0];
+                usedAttractions.add(afternoonAttraction.name);
+                break;
+              }
+            }
+            
+            if (afternoonAttraction) {
+              routeHTML += `
+                <div class="flex items-start">
+                  <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                    <i class="fa fa-map-marker text-green-500"></i>
+                  </div>
+                  <div>
+                    <h6 class="font-medium font-display text-neutral-600">${afternoonAttraction.name}</h6>
+                    <p class="text-sm text-neutral-500 mt-1">${afternoonAttraction.description}</p>
+                    <div class="flex items-center mt-2 text-xs text-neutral-400">
+                      <i class="fa fa-clock-o mr-1"></i>
+                      <span>建议游览时间: ${afternoonAttraction.time}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            } else {
+              routeHTML += `
+                <div class="flex items-start">
+                  <div class="bg-green-100 p-2 rounded-full mr-3 mt-1">
+                    <i class="fa fa-coffee text-green-500"></i>
+                  </div>
+                  <div>
+                    <h6 class="font-medium font-display text-neutral-600">自由活动</h6>
+                    <p class="text-sm text-neutral-500 mt-1">在住宿地休息或自由探索周边环境</p>
+                  </div>
+                </div>
+              `;
+            }
+          }
+          
+          routeHTML += `
+              </div>
+            </div>
+          `;
+          
+          // 晚餐和晚上活动
+          routeHTML += `
+            <div class="relative">
+              <div class="absolute left-0 top-2 w-4 h-4 bg-purple-500 rounded-full -ml-2"></div>
+              <div class="bg-white rounded-lg p-5 shadow-sm border border-neutral-100">
+                <h5 class="text-lg font-semibold font-display text-neutral-600 mb-2">晚上</h5>
+          `;
+          
+          if (interests.includes('culture') && day === 1) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-purple-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-music text-purple-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">民俗表演</h6>
+                  <p class="text-sm text-neutral-500 mt-1">欣赏传统土家族歌舞表演，包括龙船调和肉连响等非遗节目</p>
+                </div>
+              </div>
+            `;
+          } else if (interests.includes('food') && day === 1) {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-purple-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-cutlery text-purple-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">特色晚餐</h6>
+                  <p class="text-sm text-neutral-500 mt-1">在当地特色餐厅享用土家族传统晚宴，品尝渣海椒炒腊肉、莼菜炖老母鸡等特色菜肴</p>
+                </div>
+              </div>
+            `;
+          } else {
+            routeHTML += `
+              <div class="flex items-start">
+                <div class="bg-purple-100 p-2 rounded-full mr-3 mt-1">
+                  <i class="fa fa-moon-o text-purple-500"></i>
+                </div>
+                <div>
+                  <h6 class="font-medium font-display text-neutral-600">自由活动</h6>
+                  <p class="text-sm text-neutral-500 mt-1">在住宿地休息或自由活动，为第二天的行程养精蓄锐</p>
+                </div>
+              </div>
+            `;
+          }
+          
+          routeHTML += `
+              </div>
+            </div>
+          `;
+          
+          routeHTML += `
+              </div>
+            </div>
+          `;
+        }
+        
+        // 添加交通建议
+        routeHTML += `
+          <div class="mt-8 pt-6 border-t border-neutral-200">
+            <h4 class="text-xl font-bold font-display text-neutral-600 mb-4">交通建议</h4>
+        `;
+        
+        if (transport === 'car') {
+          routeHTML += `
+            <div class="bg-primary/5 p-5 rounded-lg">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-3 rounded-full mr-4">
+                  <i class="fa fa-car text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h5 class="font-medium font-display text-neutral-600 mb-2">自驾出行</h5>
+                  <p class="text-neutral-500 mb-3">自驾车可以让您按照自己的节奏探索。景点之间的总行驶距离约为${days * 80-120}公里。</p>
+                  <ul class="space-y-2 text-sm text-neutral-500">
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                      <span>大多数景点和住宿都提供免费停车服务</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                      <span>建议使用导航软件规划路线</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                      <span>山区道路多弯道，请谨慎驾驶</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (transport === 'taxi') {
+          routeHTML += `
+            <div class="bg-primary/5 p-5 rounded-lg">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-3 rounded-full mr-4">
+                  <i class="fa fa-taxi text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h5 class="font-medium font-display text-neutral-600 mb-2">出租车出行</h5>
+                  <p class="text-neutral-500 mb-3">利川的出租车很容易找到。全天包车费用约为${days * 300-400}元。</p>
+                  <ul class="space-y-2 text-sm text-neutral-500">
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                      <span>建议长途行程提前协商好车费</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                      <span>可以要求司机等待您游览景点</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-info-circle text-primary mt-1 mr-2"></i>
+                      <span>推荐司机通常对当地景点非常熟悉，可以提供有用的建议</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          routeHTML += `
+            <div class="bg-primary/5 p-5 rounded-lg">
+              <div class="flex items-start">
+                <div class="bg-primary/10 p-3 rounded-full mr-4">
+                  <i class="fa fa-bus text-primary text-xl"></i>
+                </div>
+                <div>
+                  <h5 class="font-medium font-display text-neutral-600 mb-2">公共交通</h5>
+                  <p class="text-neutral-500 mb-3">公共汽车连接主要景点，但班次可能有限。票价约为每次2-10元。</p>
+                  <ul class="space-y-2 text-sm text-neutral-500">
+                    <li class="flex items-start">
+                      <i class="fa fa-info-circle text-primary mt-1 mr-2"></i>
+                      <span>汽车班次可能会季节性变化，请向您的住宿地咨询最新信息</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                      <span>部分偏远景点可能没有直达公共交通</span>
+                    </li>
+                    <li class="flex items-start">
+                      <i class="fa fa-clock-o text-primary mt-1 mr-2"></i>
+                      <span>末班车通常在18:00左右，请合理安排时间</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        
+        // 添加住宿建议
+        routeHTML += `
+          <div class="mt-6">
+            <h4 class="text-xl font-bold font-display text-neutral-600 mb-4">住宿建议</h4>
+            <div class="bg-neutral-50 p-5 rounded-lg">
+              <p class="text-neutral-600 mb-4">根据您的旅行风格，我们推荐以下住宿选择：</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        `;
+        
+        if (style === 'leisure') {
+          routeHTML += `
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">山夏·星野谧境泳池度假民宿</h5>
+              <p class="text-sm text-neutral-500">环境优美，设施齐全，适合放松休闲</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">龙船调湖居民宿</h5>
+              <p class="text-sm text-neutral-500">湖景房，环境宁静，服务周到</p>
+            </div>
+          `;
+        } else if (style === 'adventure') {
+          routeHTML += `
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">山水民宿</h5>
+              <p class="text-sm text-neutral-500">国家丙级旅游民宿，靠近多个徒步路线</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">分水度假村</h5>
+              <p class="text-sm text-neutral-500">位于风景区内，适合户外爱好者</p>
+            </div>
+          `;
+        } else {
+          routeHTML += `
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">利川天墅酒店</h5>
+              <p class="text-sm text-neutral-500">位置便利，设施完善，服务专业</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+              <h5 class="font-medium font-display text-neutral-600 mb-2">凉风小舍民宿</h5>
+              <p class="text-sm text-neutral-500">传统土家族风格建筑，体验当地文化</p>
+            </div>
+          `;
+        }
+        
+        routeHTML += `
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 添加实用小贴士
+        routeHTML += `
+          <div class="mt-6">
+            <h4 class="text-xl font-bold font-display text-neutral-600 mb-4">实用小贴士</h4>
+            <div class="bg-yellow-50 p-5 rounded-lg">
+              <ul class="space-y-3">
+                <li class="flex items-start">
+                  <div class="bg-yellow-100 p-2 rounded-full mr-3 mt-1">
+                    <i class="fa fa-sun-o text-yellow-600"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-medium font-display text-neutral-600">天气准备</h5>
+                    <p class="text-sm text-neutral-500">利川夏季凉爽（平均22℃），建议携带薄外套；山区天气多变，请准备雨具</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="bg-yellow-100 p-2 rounded-full mr-3 mt-1">
+                    <i class="fa fa-medkit text-yellow-600"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-medium font-display text-neutral-600">药品准备</h5>
+                    <p class="text-sm text-neutral-500">建议携带常用药品，如感冒药、肠胃药、创可贴、晕车药等</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="bg-yellow-100 p-2 rounded-full mr-3 mt-1">
+                    <i class="fa fa-language text-yellow-600"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-medium font-display text-neutral-600">语言提示</h5>
+                    <p class="text-sm text-neutral-500">当地主要使用汉语，部分老年人可能会说土家族语言</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+        
+        // 添加操作按钮
+        routeHTML += `
+          <div class="mt-8 flex flex-wrap gap-4 justify-center">
+            <button id="save-route" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+              <i class="fa fa-download mr-2"></i> 保存路线
+            </button>
+            <button id="print-route" class="bg-white border border-primary text-primary hover:bg-primary/5 px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+              <i class="fa fa-print mr-2"></i> 打印路线
+            </button>
+            <button id="share-route" class="bg-white border border-primary text-primary hover:bg-primary/5 px-6 py-3 rounded-lg transition-colors duration-300 flex items-center">
+              <i class="fa fa-share-alt mr-2"></i> 分享路线
+            </button>
+          </div>
+        `;
+        
+        routeOutput.innerHTML = routeHTML;
+        
+        // 添加按钮事件监听
+        document.getElementById('save-route').addEventListener('click', function() {
+          alert('路线已保存到您的账户！');
+        });
+        
+        document.getElementById('print-route').addEventListener('click', function() {
+          window.print();
+        });
+        
+        document.getElementById('share-route').addEventListener('click', function() {
+          alert('分享链接已复制到剪贴板！');
+        });
+        
+      }, 1500); // 1.5秒延迟模拟API调用
+    });
+    
+    // 淡季路线选择功能
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const routeCards = document.querySelectorAll('.route-card');
+    const emptyTip = document.getElementById('emptyTip');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // 切换筛选按钮激活状态
+        filterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const duration = this.dataset.duration;
+        let visibleCount = 0;
+
+        // 筛选路线卡片
+        routeCards.forEach(card => {
+          if (duration === 'all' || card.dataset.duration === duration) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // 显示/隐藏无结果提示
+        emptyTip.style.display = visibleCount === 0 ? 'block' : 'none';
+      });
+    });
+
+    // 路线卡片点击选择效果
+    routeCards.forEach(card => {
+      card.addEventListener('click', function(e) {
+        // 避免点击复选框时重复触发
+        if (e.target.type !== 'checkbox') {
+          const checkbox = this.querySelector('input');
+          checkbox.checked = !checkbox.checked;
+          this.classList.toggle('selected', checkbox.checked);
+        } else {
+          this.classList.toggle('selected', e.target.checked);
+        }
+      });
+    });
+
+    // 显示所选路线
+    window.showSelectedRoutes = function() {
+      const checkboxes = document.querySelectorAll('input[name="route"]:checked');
+      const resultArea = document.getElementById('resultArea');
+      const selectedRoutes = document.getElementById('selectedRoutes');
+      
+      if (checkboxes.length === 0) {
+        resultArea.style.display = 'none';
+        return;
+      }
+
+      selectedRoutes.innerHTML = '';
+      checkboxes.forEach(checkbox => {
+        const routeName = checkbox.value;
+        const routeCard = checkbox.closest('.route-card');
+        const duration = routeCard.querySelector('.duration').textContent;
+        const suitable = routeCard.querySelector('p:nth-of-type(1)').textContent;
+        const highlights = routeCard.querySelector('p:nth-of-type(2)').textContent;
+        
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        resultItem.innerHTML = `
+          <h4>${routeName}（${duration}）</h4>
+          <p>${suitable}</p>
+          <p>${highlights}</p>
+        `;
+        selectedRoutes.appendChild(resultItem);
+      });
+
+      resultArea.style.display = 'block';
+    };
+
+    // 重置选择
+    window.resetSelection = function() {
+      // 取消所有复选框选中状态
+      document.querySelectorAll('input[name="route"]').forEach(checkbox => {
+        checkbox.checked = false;
+        checkbox.closest('.route-card').classList.remove('selected');
+      });
+      // 隐藏结果区
+      document.getElementById('resultArea').style.display = 'none';
+      // 重置筛选为全部
+      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns[0].classList.add('active');
+      // 显示所有路线
+      routeCards.forEach(card => card.style.display = 'block');
+      emptyTip.style.display = 'none';
+    };
+  </script>
+</body>
+</html>
