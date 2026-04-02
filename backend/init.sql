@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
     visited_place VARCHAR(100),
     review_text TEXT NOT NULL,
+    image_url TEXT,
     privacy_consent BOOLEAN NOT NULL DEFAULT true,
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -30,6 +31,34 @@ CREATE TRIGGER update_reviews_updated_at
     BEFORE UPDATE ON reviews 
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
+
+-- 订单表
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    contact VARCHAR(100) NOT NULL,
+    package_name VARCHAR(150) NOT NULL,
+    travel_date DATE NOT NULL,
+    guests INTEGER NOT NULL CHECK (guests > 0),
+    total_price NUMERIC(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'canceled')),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
+CREATE TRIGGER update_orders_updated_at 
+    BEFORE UPDATE ON orders 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- 插入示例订单
+INSERT INTO orders (customer_name, contact, package_name, travel_date, guests, total_price, status, notes) VALUES
+('陈女士', '13600001111', '民宿康养线', '2026-06-18', 2, 1280.00, 'pending', '希望安排接机服务'),
+('刘先生', '13700002222', '美食打卡线', '2026-06-22', 4, 1980.00, 'confirmed', '含儿童餐'),
+('杨小姐', '13800003333', '特色特产线', '2026-07-01', 3, 1580.00, 'completed', '需要推荐当地手工特产'),
+('周先生', '13900004444', '交通接驳线', '2026-06-25', 1, 480.00, 'confirmed', '需要安排机场接送');
 
 -- 插入示例数据（已批准的评价）
 INSERT INTO reviews (name, email, rating, visited_place, review_text, status) VALUES

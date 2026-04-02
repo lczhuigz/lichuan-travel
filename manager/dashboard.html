@@ -26,7 +26,7 @@
 
     <div class="container mx-auto px-4 py-8">
         <!-- 统计卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <div class="bg-white rounded-lg p-6 shadow">
                 <div class="flex items-center justify-between">
                     <div>
@@ -54,8 +54,20 @@
             <div class="bg-white rounded-lg p-6 shadow">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-neutral-400 text-sm">已通过</p>
-                        <p class="text-2xl font-bold text-green-600" id="approved-count">0</p>
+                        <p class="text-neutral-400 text-sm">总订单数</p>
+                        <p class="text-2xl font-bold text-[#165DFF]" id="total-orders">0</p>
+                    </div>
+                    <div class="bg-[#165DFF]/10 p-3 rounded-full">
+                        <i class="fa fa-shopping-cart text-[#165DFF] text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg p-6 shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-neutral-400 text-sm">已确认订单</p>
+                        <p class="text-2xl font-bold text-green-600" id="confirmed-orders">0</p>
                     </div>
                     <div class="bg-green-100 p-3 rounded-full">
                         <i class="fa fa-check-circle text-green-500 text-xl"></i>
@@ -76,9 +88,19 @@
             </div>
         </div>
 
-        <!-- 标签页切换 -->
-        <div class="bg-white rounded-lg shadow mb-6">
-            <div class="border-b border-neutral-200">
+        <div class="flex flex-wrap gap-3 mb-6">
+            <button id="section-reviews" onclick="switchSection('reviews')" class="bg-[#165DFF] text-white px-5 py-3 rounded-lg font-medium shadow-sm">
+                评价管理
+            </button>
+            <button id="section-orders" onclick="switchSection('orders')" class="bg-white text-neutral-600 border border-neutral-200 px-5 py-3 rounded-lg font-medium shadow-sm hover:bg-neutral-50">
+                订单管理
+            </button>
+        </div>
+
+        <div id="review-section">
+            <!-- 标签页切换 -->
+            <div class="bg-white rounded-lg shadow mb-6">
+                <div class="border-b border-neutral-200">
                 <nav class="flex -mb-px">
                     <button onclick="switchTab('pending')" id="tab-pending" class="px-6 py-3 text-[#165DFF] border-b-2 border-[#165DFF] font-medium">
                         待审核 <span id="pending-badge" class="ml-2 bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0</span>
@@ -144,6 +166,49 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- 订单管理区 -->
+        <div id="order-section" class="hidden bg-white rounded-lg shadow overflow-hidden mt-8">
+            <div class="p-6 border-b border-neutral-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-neutral-700">订单管理</h2>
+                    <p class="text-neutral-500">查看所有订单并修改订单状态。</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="order-filter-status" onchange="loadOrders()" class="border border-neutral-300 rounded-lg px-4 py-2 bg-white text-neutral-700">
+                        <option value="">全部状态</option>
+                        <option value="pending">待处理</option>
+                        <option value="confirmed">已确认</option>
+                        <option value="completed">已完成</option>
+                        <option value="canceled">已取消</option>
+                    </select>
+                    <button onclick="loadOrders()" class="bg-[#165DFF] text-white px-4 py-2 rounded-lg">刷新列表</button>
+                </div>
+            </div>
+            <div id="order-list" class="divide-y divide-neutral-200"></div>
+            <div id="order-loading" class="text-center py-12 hidden">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
+                <p class="text-neutral-500 mt-2">加载订单中...</p>
+            </div>
+            <div id="order-no-data" class="text-center py-12 hidden">
+                <i class="fa fa-inbox text-4xl text-neutral-300 mb-4"></i>
+                <p class="text-neutral-500">暂无订单数据</p>
+            </div>
+            <div id="order-pagination" class="bg-white px-6 py-4 flex items-center justify-between border-t border-neutral-200 hidden">
+                <div class="text-sm text-neutral-500">
+                    第 <span id="order-current-page">1</span> / <span id="order-total-pages">1</span> 页
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="changeOrderPage('prev')" id="order-prev-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        上一页
+                    </button>
+                    <button onclick="changeOrderPage('next')" id="order-next-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        下一页
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <style>
@@ -182,6 +247,10 @@
         let totalPages = 1;
         let selectedIds = new Set();
         let allReviews = [];
+        let activeSection = 'reviews';
+        let orderPage = 1;
+        let orderTotalPages = 1;
+        let allOrders = [];
 
         // 页面加载时检查登录状态
         document.addEventListener('DOMContentLoaded', function() {
@@ -193,6 +262,8 @@
             
             loadStats();
             loadReviews();
+            loadOrders();
+            switchSection('reviews');
         });
 
         // 获取认证头
@@ -210,11 +281,13 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    document.getElementById('total-count').textContent = result.data.total || 0;
-                    document.getElementById('pending-count').textContent = result.data.pending || 0;
-                    document.getElementById('approved-count').textContent = result.data.approved || 0;
+                    document.getElementById('total-count').textContent = result.data.total_reviews || 0;
+                    document.getElementById('pending-count').textContent = result.data.pending_reviews || 0;
+                    document.getElementById('approved-count').textContent = result.data.approved_reviews || 0;
                     document.getElementById('avg-rating').textContent = result.data.avg_rating || '0.0';
-                    document.getElementById('pending-badge').textContent = result.data.pending || 0;
+                    document.getElementById('pending-badge').textContent = result.data.pending_reviews || 0;
+                    document.getElementById('total-orders').textContent = result.data.total_orders || 0;
+                    document.getElementById('confirmed-orders').textContent = result.data.confirmed_orders || 0;
                 }
             } catch (error) {
                 console.error('加载统计失败:', error);
@@ -404,6 +477,127 @@
             selectedIds.clear();
             updateBatchActions();
             displayReviews(allReviews);
+        }
+
+        // 切换管理区
+        function switchSection(section) {
+            activeSection = section;
+            document.getElementById('section-reviews').classList.toggle('bg-[#165DFF]', section === 'reviews');
+            document.getElementById('section-reviews').classList.toggle('text-white', section === 'reviews');
+            document.getElementById('section-reviews').classList.toggle('bg-white', section !== 'reviews');
+            document.getElementById('section-reviews').classList.toggle('text-neutral-600', section !== 'reviews');
+            document.getElementById('section-orders').classList.toggle('bg-[#165DFF]', section === 'orders');
+            document.getElementById('section-orders').classList.toggle('text-white', section === 'orders');
+            document.getElementById('section-orders').classList.toggle('bg-white', section !== 'orders');
+            document.getElementById('section-orders').classList.toggle('text-neutral-600', section !== 'orders');
+
+            document.getElementById('batch-actions').style.display = section === 'reviews' ? 'flex' : 'none';
+            document.getElementById('pagination').style.display = section === 'reviews' ? 'flex' : 'none';
+            document.getElementById('order-section').classList.toggle('hidden', section !== 'orders');
+            document.getElementById('review-section').classList.toggle('hidden', section !== 'reviews');
+
+            if (section === 'reviews') {
+                loadReviews();
+            } else {
+                loadOrders();
+            }
+        }
+
+        // 加载订单列表
+        async function loadOrders() {
+            const listEl = document.getElementById('order-list');
+            const loadingEl = document.getElementById('order-loading');
+            const noDataEl = document.getElementById('order-no-data');
+            const paginationEl = document.getElementById('order-pagination');
+            const status = document.getElementById('order-filter-status').value;
+
+            loadingEl.classList.remove('hidden');
+            listEl.innerHTML = '';
+            noDataEl.classList.add('hidden');
+            paginationEl.classList.add('hidden');
+
+            try {
+                const response = await fetch(`/api/admin/orders?page=${orderPage}&limit=20${status ? `&status=${status}` : ''}`, {
+                    headers: getAuthHeader()
+                });
+                const result = await response.json();
+                loadingEl.classList.add('hidden');
+
+                if (result.success) {
+                    const orders = result.data;
+                    orderTotalPages = result.pagination ? result.pagination.totalPages : 1;
+                    document.getElementById('order-current-page').textContent = orderPage;
+                    document.getElementById('order-total-pages').textContent = orderTotalPages;
+                    document.getElementById('order-prev-page').disabled = orderPage <= 1;
+                    document.getElementById('order-next-page').disabled = orderPage >= orderTotalPages;
+
+                    if (orders.length === 0) {
+                        noDataEl.classList.remove('hidden');
+                        return;
+                    }
+
+                    listEl.innerHTML = orders.map(order => `
+                        <div class="p-6 ${order.status === 'pending' ? 'bg-yellow-50' : order.status === 'confirmed' ? 'bg-green-50' : order.status === 'canceled' ? 'bg-red-50' : 'bg-white'}">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                <div class="flex-1">
+                                    <p class="text-sm text-neutral-400 mb-1">订单 #${order.id} · ${order.status === 'pending' ? '待处理' : order.status === 'confirmed' ? '已确认' : order.status === 'completed' ? '已完成' : '已取消'}</p>
+                                    <h3 class="text-lg font-semibold text-neutral-700">${order.customer_name}</h3>
+                                    <p class="text-neutral-500">${order.contact} · ${order.package_name}</p>
+                                    <p class="text-sm text-neutral-500 mt-2">出游日期：${order.travel_date} · 人数：${order.guests} · 价格：¥${order.total_price}</p>
+                                    ${order.notes ? `<p class="text-sm text-neutral-500 mt-2">备注：${order.notes}</p>` : ''}
+                                </div>
+                                <div class="flex flex-wrap gap-2 items-center">
+                                    ${order.status !== 'confirmed' && order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'confirmed')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">确认</button>` : ''}
+                                    ${order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-[#165DFF] hover:bg-[#1348C4] text-white px-4 py-2 rounded-lg text-sm">完成</button>` : ''}
+                                    ${order.status !== 'canceled' ? `<button onclick="updateOrderStatus(${order.id}, 'canceled')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">取消</button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    paginationEl.classList.remove('hidden');
+                } else {
+                    noDataEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('加载订单失败:', error);
+                loadingEl.classList.add('hidden');
+                noDataEl.classList.remove('hidden');
+            }
+        }
+
+        function changeOrderPage(direction) {
+            if (direction === 'prev' && orderPage > 1) {
+                orderPage--;
+                loadOrders();
+            } else if (direction === 'next' && orderPage < orderTotalPages) {
+                orderPage++;
+                loadOrders();
+            }
+        }
+
+        async function updateOrderStatus(id, status) {
+            if (!confirm(`确定要将订单 #${id} 更新为 ${status === 'confirmed' ? '已确认' : status === 'completed' ? '已完成' : '已取消'} 吗？`)) return;
+            try {
+                const response = await fetch(`/api/admin/orders/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    loadStats();
+                    loadOrders();
+                } else {
+                    alert(result.message || '更新失败');
+                }
+            } catch (error) {
+                alert('网络错误，请重试');
+            }
         }
 
         // 批量通过
