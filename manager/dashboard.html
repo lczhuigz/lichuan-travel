@@ -117,8 +117,8 @@
 
         <!-- 批量操作栏 -->
         <div id="batch-actions" class="bg-white rounded-lg p-4 shadow mb-4 hidden">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center space-x-4 gap-3">
                     <span class="text-sm text-neutral-600">已选择 <span id="selected-count">0</span> 项</span>
                     <button onclick="batchApprove()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
                         <i class="fa fa-check mr-2"></i>批量通过
@@ -127,8 +127,8 @@
                         <i class="fa fa-times mr-2"></i>批量拒绝
                     </button>
                 </div>
-                <button onclick="clearSelection()" class="text-neutral-400 hover:text-neutral-600">
-                    <i class="fa fa-close"></i> 取消选择
+                <button onclick="clearSelection()" class="ml-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 px-4 py-2 rounded-lg text-sm transition-colors">
+                    <i class="fa fa-close mr-2"></i>取消选择
                 </button>
             </div>
         </div>
@@ -283,7 +283,6 @@
                 if (result.success) {
                     document.getElementById('total-count').textContent = result.data.total_reviews || 0;
                     document.getElementById('pending-count').textContent = result.data.pending_reviews || 0;
-                    document.getElementById('approved-count').textContent = result.data.approved_reviews || 0;
                     document.getElementById('avg-rating').textContent = result.data.avg_rating || '0.0';
                     document.getElementById('pending-badge').textContent = result.data.pending_reviews || 0;
                     document.getElementById('total-orders').textContent = result.data.total_orders || 0;
