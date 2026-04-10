@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>利川旅游 - 管理后台</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23165DFF'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20' fill='white' font-family='Arial'%3E%E2%9C%88%3C/text%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -46,7 +47,7 @@
 <body class="bg-neutral-50 min-h-screen flex flex-col">
     <!-- 导航栏 -->
     <nav id="navbar" class="fixed w-full bg-white z-50 shadow-sm">
-        <div class="px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 bg-[#165DFF] rounded-xl flex items-center justify-center shadow-sm shadow-blue-500/20">
                     <i class="fa fa-map-signs text-white text-sm"></i>
@@ -70,7 +71,7 @@
         </div>
     </nav>
 
-    <div class="px-4 sm:px-6 lg:px-8 pt-20 pb-8 flex-1">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 flex-1">
         <!-- 统计卡片 -->
         <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-5">
             <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
@@ -298,7 +299,7 @@
         </div>
     </div>
     <footer class="border-t border-neutral-200 bg-white py-4 mt-auto">
-        <div class="px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2 text-neutral-400 text-xs">
                 <i class="fa fa-map-signs text-[#165DFF]"></i>
                 <span>利川旅游管理后台</span>
@@ -509,6 +510,7 @@
                                     ${order.status !== 'confirmed' && order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'confirmed')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">确认</button>` : ''}
                                     ${order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-[#165DFF] hover:bg-[#1248CC] text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">完成</button>` : ''}
                                     ${order.status !== 'canceled' ? `<button onclick="updateOrderStatus(${order.id}, 'canceled')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">取消</button>` : ''}
+                                    <button onclick="deleteOrder(${order.id})" class="bg-neutral-500 hover:bg-neutral-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors"><i class="fa fa-trash mr-1"></i>删除</button>
                                 </div>
                             </div>
                         </div>`).join('');
@@ -518,6 +520,15 @@
         }
 
         function changeOrderPage(dir) { if (dir === 'prev' && orderPage > 1) { orderPage--; loadOrders(); } else if (dir === 'next' && orderPage < orderTotalPages) { orderPage++; loadOrders(); } }
+
+        async function deleteOrder(id) {
+            if (!confirm(`确定要删除订单 #${id} 吗？此操作不可恢复。`)) return;
+            try {
+                const response = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE', headers: getAuthHeader() });
+                const result = await response.json();
+                if (result.success) { loadStats(); loadOrders(); } else { alert(result.message || '删除失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
+        }
 
         async function updateOrderStatus(id, status) {
             const labels = { confirmed: '已确认', completed: '已完成', canceled: '已取消' };

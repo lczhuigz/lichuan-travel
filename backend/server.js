@@ -55,9 +55,35 @@ async function initializeDatabase() {
 
     await pool.query(`
       DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
-      CREATE TRIGGER update_orders_updated_at 
-        BEFORE UPDATE ON orders 
-        FOR EACH ROW 
+      CREATE TRIGGER update_orders_updated_at
+        BEFORE UPDATE ON orders
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        contact VARCHAR(255) NOT NULL,
+        subject VARCHAR(100) NOT NULL,
+        content TEXT NOT NULL,
+        status VARCHAR(20) DEFAULT 'unread' CHECK (status IN ('unread', 'read', 'replied')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status);
+      CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at DESC);
+    `);
+
+    await pool.query(`
+      DROP TRIGGER IF EXISTS update_messages_updated_at ON messages;
+      CREATE TRIGGER update_messages_updated_at
+        BEFORE UPDATE ON messages
+        FOR EACH ROW
         EXECUTE FUNCTION update_updated_at_column();
     `);
 
@@ -279,31 +305,28 @@ app.get('/api/admin/orders', validateAdmin, async (req, res) => {
     const offset = (page - 1) * limit;
     const status = req.query.status;
 
-    const values = [limit, offset];
-    let condition = '';
-    if (status) {
-      condition = 'WHERE status = $3';
-      values.push(status);
-    }
-
+    const countCondition = status ? 'WHERE status = $1' : '';
     const countParams = status ? [status] : [];
     const countResult = await pool.query(
-      `SELECT COUNT(*) FROM orders ${condition}`,
+      `SELECT COUNT(*) FROM orders ${countCondition}`,
       countParams
     );
-
     const total = parseInt(countResult.rows[0].count);
 
-    const queryValues = condition ? [limit, offset, status] : [limit, offset];
+    const whereClause = status ? 'WHERE status = $1' : '';
+    const queryParams = status ? [status, limit, offset] : [limit, offset];
+    const limitParam = status ? '$2' : '$1';
+    const offsetParam = status ? '$3' : '$2';
+
     const orders = await pool.query(
       `SELECT id, customer_name, contact, package_name, TO_CHAR(travel_date, 'YYYY-MM-DD') as travel_date,
               guests, total_price, status, notes,
               TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at,
               TO_CHAR(updated_at, 'YYYY-MM-DD HH24:MI:SS') as updated_at
-       FROM orders ${condition}
+       FROM orders ${whereClause}
        ORDER BY created_at DESC
-       LIMIT $1 OFFSET $2`,
-      queryValues
+       LIMIT ${limitParam} OFFSET ${offsetParam}`,
+      queryParams
     );
 
     res.json({
@@ -347,6 +370,118 @@ app.put('/api/admin/orders/:id/status', validateAdmin, async (req, res) => {
   } catch (error) {
     console.error('更新订单状态错误:', error);
     res.status(500).json({ success: false, message: '更新订单状态失败' });
+  }
+});
+
+// 删除订单
+app.delete('/api/admin/orders/:id', validateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: '订单不存在' });
+    }
+    res.json({ success: true, message: '订单已删除' });
+  } catch (error) {
+    console.error('删除订单错误:', error);
+    res.status(500).json({ success: false, message: '删除订单失败' });
+  }
+});
+
+// ============ 留言相关接口 ============
+
+// 提交留言（公开接口）
+app.post('/api/messages', async (req, res) => {
+  try {
+    const { name, contact, subject, content } = req.body;
+    if (!name || !contact || !subject || !content) {
+      return res.status(400).json({ success: false, message: '请填写所有必填字段' });
+    }
+    const result = await pool.query(
+      `INSERT INTO messages (name, contact, subject, content) VALUES ($1, $2, $3, $4) RETURNING id, created_at`,
+      [name, contact, subject, content]
+    );
+    res.status(201).json({ success: true, message: '留言提交成功', data: result.rows[0] });
+  } catch (error) {
+    console.error('提交留言错误:', error);
+    res.status(500).json({ success: false, message: '留言提交失败，请稍后重试' });
+  }
+});
+
+// 获取留言列表（管理员）
+app.get('/api/admin/messages', validateAdmin, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const offset = (page - 1) * limit;
+    const status = req.query.status;
+
+    let condition = '';
+    const countParams = [];
+    if (status) { condition = 'WHERE status = $1'; countParams.push(status); }
+
+    const countResult = await pool.query(`SELECT COUNT(*) FROM messages ${condition}`, countParams);
+    const total = parseInt(countResult.rows[0].count);
+
+    const queryParams = status ? [status, limit, offset] : [limit, offset];
+    const whereClause = status ? 'WHERE status = $1' : '';
+    const limitParam = status ? '$2' : '$1';
+    const offsetParam = status ? '$3' : '$2';
+
+    const messages = await pool.query(
+      `SELECT id, name, contact, subject, content, status,
+              TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+       FROM messages ${whereClause}
+       ORDER BY created_at DESC
+       LIMIT ${limitParam} OFFSET ${offsetParam}`,
+      queryParams
+    );
+
+    res.json({
+      success: true,
+      data: messages.rows,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+    });
+  } catch (error) {
+    console.error('获取留言列表错误:', error);
+    res.status(500).json({ success: false, message: '获取留言失败' });
+  }
+});
+
+// 更新留言状态（管理员）
+app.put('/api/admin/messages/:id/status', validateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!['unread', 'read', 'replied'].includes(status)) {
+      return res.status(400).json({ success: false, message: '无效的留言状态' });
+    }
+    const result = await pool.query(
+      `UPDATE messages SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, status`,
+      [status, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: '留言不存在' });
+    }
+    res.json({ success: true, message: '留言状态已更新', data: result.rows[0] });
+  } catch (error) {
+    console.error('更新留言状态错误:', error);
+    res.status(500).json({ success: false, message: '更新留言状态失败' });
+  }
+});
+
+// 删除留言（管理员）
+app.delete('/api/admin/messages/:id', validateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('DELETE FROM messages WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: '留言不存在' });
+    }
+    res.json({ success: true, message: '留言已删除' });
+  } catch (error) {
+    console.error('删除留言错误:', error);
+    res.status(500).json({ success: false, message: '删除失败' });
   }
 });
 
@@ -521,7 +656,8 @@ app.get('/api/admin/stats', validateAdmin, async (req, res) => {
         (SELECT COUNT(*) FROM orders) as total_orders,
         (SELECT COUNT(*) FROM orders WHERE status = 'pending') as pending_orders,
         (SELECT COUNT(*) FROM orders WHERE status = 'confirmed') as confirmed_orders,
-        (SELECT COALESCE(SUM(total_price),0)::numeric(12,2) FROM orders WHERE status IN ('confirmed','completed')) as revenue
+        (SELECT COALESCE(SUM(total_price),0)::numeric(12,2) FROM orders WHERE status IN ('confirmed','completed')) as revenue,
+        (SELECT COUNT(*) FROM messages WHERE status = 'unread') as unread_messages
       FROM reviews
     `);
     
