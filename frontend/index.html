@@ -66,6 +66,28 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+      /* ====== Enhanced Visual Effects ====== */
+      .glass {
+        background: rgba(255,255,255,0.72);
+        backdrop-filter: blur(16px) saturate(1.4);
+        -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      }
+      .glass-dark {
+        background: rgba(22,93,255,0.08);
+        backdrop-filter: blur(12px);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #165DFF 0%, #00B42A 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .shadow-glow {
+        box-shadow: 0 0 40px rgba(22,93,255,0.12), 0 10px 30px rgba(0,0,0,0.06);
+      }
+      .shadow-glow-accent {
+        box-shadow: 0 0 30px rgba(255,125,0,0.1), 0 8px 24px rgba(0,0,0,0.06);
+      }
     }
     
     /* 淡季路线选择样式 */
@@ -215,8 +237,268 @@
     }
   </style>
   
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <!-- 引入更美观的字体 -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!-- ====== Enhanced Visual Styles ====== -->
+<style>
+  /* Chinese Typography Override */
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Noto Serif SC', 'Montserrat', serif !important;
+  }
+  body, p, span, a, li, input, textarea, select, button {
+    font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #F5F7FA; }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #165DFF 0%, #00B42A 100%);
+    border-radius: 4px;
+  }
+
+  /* ====== Scroll Reveal Animations ====== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+  /* Stagger children */
+  .stagger-children > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .stagger-children.visible > *:nth-child(1) { transition-delay: 0.05s; }
+  .stagger-children.visible > *:nth-child(2) { transition-delay: 0.12s; }
+  .stagger-children.visible > *:nth-child(3) { transition-delay: 0.19s; }
+  .stagger-children.visible > *:nth-child(4) { transition-delay: 0.26s; }
+  .stagger-children.visible > *:nth-child(5) { transition-delay: 0.33s; }
+  .stagger-children.visible > *:nth-child(6) { transition-delay: 0.40s; }
+  .stagger-children.visible > *:nth-child(n+7) { transition-delay: 0.45s; }
+  .stagger-children.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ====== Hero Enhancements ====== */
+  .hero-section { position: relative; overflow: hidden; }
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to top, #F5F7FA, transparent);
+    z-index: 5;
+    pointer-events: none;
+  }
+  /* Floating particles */
+  @keyframes floatParticle {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-20px) rotate(180deg); opacity: 0.6; }
+  }
+  .hero-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    animation: floatParticle var(--duration, 6s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    z-index: 2;
+  }
+
+  /* ====== Navbar Glass Effect ====== */
+  #navbar.scrolled {
+    background: rgba(255,255,255,0.88) !important;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: 0 1px 30px rgba(0,0,0,0.06);
+  }
+  #navbar.scrolled .nav-active-indicator {
+    width: 100%;
+  }
+  nav a {
+    position: relative;
+    padding-bottom: 4px;
+  }
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #165DFF, #00B42A);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  nav a:hover::after { width: 100%; }
+
+  /* ====== Card Enhancements ====== */
+  .card-enhanced {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.4s ease;
+    will-change: transform;
+  }
+  .card-enhanced:hover {
+    transform: translateY(-10px) scale(1.015);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.1), 0 8px 16px rgba(22,93,255,0.06);
+  }
+  .card-enhanced:hover .card-img-zoom {
+    transform: scale(1.08);
+  }
+  .card-img-zoom {
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Image shimmer loading effect */
+  .img-shimmer {
+    background: linear-gradient(110deg, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+  }
+  @keyframes shimmer {
+    to { background-position: -200% 0; }
+  }
+
+  /* ====== Section Dividers ====== */
+  .section-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; padding: 0; margin: 0;
+    color: #C0C4CC; font-size: 13px; user-select: none;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1; max-width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, #E4E7ED, transparent);
+  }
+
+  /* ====== Badge enhancements ====== */
+  .badge-glow {
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  @keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+
+  /* ====== Stat counter animation ====== */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stat-animate {
+    animation: countUp 0.6s ease-out forwards;
+  }
+
+  /* ====== Back to Top ====== */
+  .back-to-top {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #165DFF, #00B42A);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(22,93,255,0.3);
+    z-index: 99;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.35s ease;
+    pointer-events: none;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+  .back-to-top:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 28px rgba(22,93,255,0.4);
+  }
+
+  /* ====== Food / Culture image overlays ====== */
+  .img-overlay-gradient {
+    position: relative;
+  }
+  .img-overlay-gradient::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.04) 100%);
+    pointer-events: none;
+  }
+
+  /* ====== Route cards ====== */
+  .route-card {
+    transition: all 0.35s ease;
+    position: relative;
+  }
+  .route-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #165DFF, #00B42A);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.35s ease;
+  }
+  .route-card.selected::before { opacity: 1; }
+  .route-card.selected {
+    border-color: transparent;
+    background: white;
+  }
+
+  /* ====== Responsive tweaks ====== */
+  @media (max-width: 768px) {
+    .hero-section::after { height: 60px; }
+    .back-to-top { bottom: 20px; right: 20px; width: 42px; height: 42px; }
+  }
+
+  /* ====== Page load animation ====== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-content-animate {
+    animation: fadeInUp 1s ease-out 0.2s both;
+  }
+  .hero-badges-animate {
+    animation: fadeInUp 1s ease-out 0.6s both;
+  }
+  .hero-tags-animate {
+    animation: fadeInUp 1s ease-out 0.9s both;
+  }
+</style>
+
 </head>
 
 <body class="bg-neutral-100 font-sans text-neutral-600">
@@ -259,44 +541,50 @@
   </header>
 
   <!-- 英雄区域 -->
-  <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+  <section class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden hero-section">
     <!-- 背景图片 -->
     <div class="absolute inset-0 z-0">
       <img src="https://p3-doubao-search-sign.byteimg.com/mosaic-legacy/31f700034a6052b8b484~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767552&x-signature=9jDbQJci7lJek%2BsTMfedByIZlIM%3D" alt="利川风景" class="w-full h-full object-cover">
       <!-- 渐变遮罩 -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/35 to-black/15"></div>
     </div>
+    <!-- Floating particles -->
+    <div class="hero-particle" style="width:80px;height:80px;top:15%;left:70%;--duration:8s;--delay:0s;"></div>
+    <div class="hero-particle" style="width:40px;height:40px;top:60%;left:85%;--duration:6s;--delay:1s;"></div>
+    <div class="hero-particle" style="width:60px;height:60px;top:30%;left:90%;--duration:7s;--delay:2s;"></div>
+    <div class="hero-particle" style="width:30px;height:30px;top:75%;left:75%;--duration:5s;--delay:0.5s;"></div>
+    <div class="hero-particle" style="width:50px;height:50px;top:10%;left:55%;--duration:9s;--delay:1.5s;"></div>
     
     <div class="container mx-auto px-4 relative z-10">
       <div class="max-w-3xl">
-        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold font-display text-white leading-tight mb-6 tracking-tight">
+        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold font-display text-white leading-tight mb-6 tracking-tight hero-content-animate">
           利川<br>
-          <span class="text-primary">中国凉爽之城</span>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-emerald-300 to-teal-200">中国凉爽之城</span>
         </h1>
-        <p class="text-[clamp(1.1rem,2vw,1.4rem)] text-white/90 mb-8 max-w-2xl text-balance font-sans">探索令人惊叹的自然景观、独特的土家族文化和美味的地方美食，在这个夏季平均气温仅22℃的避暑天堂</p>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a href="#attractions" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg font-medium inline-flex items-center justify-center">
+        <p class="text-[clamp(1.1rem,2vw,1.4rem)] text-white/90 mb-8 max-w-2xl text-balance font-sans hero-content-animate" style="animation-delay:0.3s">探索令人惊叹的自然景观、独特的土家族文化和美味的地方美食，在这个夏季平均气温仅22℃的避暑天堂</p>
+        <div class="flex flex-col sm:flex-row gap-4 hero-content-animate" style="animation-delay:0.45s">
+          <a href="#attractions" class="bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-500/25 font-medium inline-flex items-center justify-center">
             <i class="fa fa-map-marker mr-2"></i>
             探索景点
           </a>
-          <a href="#custom-route" class="bg-white hover:bg-white/90 text-primary border border-white px-8 py-3 rounded-lg transition-all transform hover:scale-105 shadow-md font-medium inline-flex items-center justify-center">
+          <a href="#custom-route" class="bg-white/15 hover:bg-white/25 text-white border border-white/25 px-8 py-3.5 rounded-xl transition-all transform hover:scale-105 backdrop-blur-sm font-medium inline-flex items-center justify-center">
             <i class="fa fa-route mr-2"></i>
             定制路线
           </a>
         </div>
         
         <!-- 特色标签 -->
-        <div class="flex flex-wrap gap-3 mt-12">
-          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
-            <i class="fa fa-thermometer-half mr-2"></i>
+        <div class="flex flex-wrap gap-3 mt-12 hero-tags-animate">
+          <div class="bg-white/15 backdrop-blur-md text-white px-5 py-2.5 rounded-full flex items-center border border-white/10 badge-glow">
+            <i class="fa fa-thermometer-half mr-2 text-emerald-300"></i>
             <span>22℃ 清凉夏季</span>
           </div>
-          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
-            <i class="fa fa-tree mr-2"></i>
+          <div class="bg-white/15 backdrop-blur-md text-white px-5 py-2.5 rounded-full flex items-center border border-white/10">
+            <i class="fa fa-tree mr-2 text-emerald-300"></i>
             <span>64% 森林覆盖率</span>
           </div>
-          <div class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center">
-            <i class="fa fa-music mr-2"></i>
+          <div class="bg-white/15 backdrop-blur-md text-white px-5 py-2.5 rounded-full flex items-center border border-white/10">
+            <i class="fa fa-music mr-2 text-amber-300"></i>
             <span>龙船调故乡</span>
           </div>
         </div>
@@ -305,18 +593,26 @@
   </section>
 
   <!-- 景点指南 -->
-  <section id="attractions" class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">必游景点</h2>
+  <section id="attractions" class="py-20 bg-white relative overflow-hidden">
+    <!-- Decorative background ornament -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-50 to-transparent rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-emerald-50 to-transparent rounded-full translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-primary/40"></span>
+          <span class="text-xs tracking-[0.3em] text-primary/60 uppercase font-medium">Scenic Spots</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-primary/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">必游景点</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">探索利川最令人惊叹的自然奇观和文化宝藏</p>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- 腾龙洞 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/92b4474740c44af58c9fa637946ad614~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=NWM9S4uKWWJcI%2F4XAYhA%2BHx4fVI%3D" alt="腾龙洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/92b4474740c44af58c9fa637946ad614~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=NWM9S4uKWWJcI%2F4XAYhA%2BHx4fVI%3D" alt="腾龙洞" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -351,9 +647,9 @@
         </div>
         
         <!-- 龙船水乡 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1fbcc2b2f958bbe22baff67d5fb3cf55~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=Hm18ICdgs%2FVacKL4Df5v9eOc3XM%3D" alt="龙船水乡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1fbcc2b2f958bbe22baff67d5fb3cf55~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=Hm18ICdgs%2FVacKL4Df5v9eOc3XM%3D" alt="龙船水乡" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -388,9 +684,9 @@
         </div>
         
         <!-- 佛宝山 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/image/99929d9608ffc028cb8c0fd201df4cb0~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=OuZaMesabaCfoZQedlWA2lGa8Po%3D" alt="佛宝山" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/image/99929d9608ffc028cb8c0fd201df4cb0~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=OuZaMesabaCfoZQedlWA2lGa8Po%3D" alt="佛宝山" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -425,9 +721,9 @@
         </div>
         
         <!-- 大水井古建筑群 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/5b5b00032b405c4041d3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=DRwM4XJYUkZhSAcxIUUozG2Q5yk%3D" alt="大水井古建筑群" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/mosaic-legacy/5b5b00032b405c4041d3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=DRwM4XJYUkZhSAcxIUUozG2Q5yk%3D" alt="大水井古建筑群" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -462,9 +758,9 @@
         </div>
         
         <!-- 玉龙洞 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/ba75a9f6c62566657477ca81ffab5eff~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=dkFS4IGHp7A3%2F8G8klbrPoomG3M%3D" alt="玉龙洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/ba75a9f6c62566657477ca81ffab5eff~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=dkFS4IGHp7A3%2F8G8klbrPoomG3M%3D" alt="玉龙洞" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -499,9 +795,9 @@
         </div>
         
         <!-- 齐岳山 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/27cd648f311554864c499bcd44adaa75~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=HW4N4tsmvktMtXdz5yuJ0MDZClI%3D" alt="齐岳山" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/27cd648f311554864c499bcd44adaa75~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766315&x-signature=HW4N4tsmvktMtXdz5yuJ0MDZClI%3D" alt="齐岳山" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -533,9 +829,9 @@
         </div>
         
         <!-- 朝阳洞 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/395aa6c8b9f47bd72de9c8d581daa499~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=0e%2FlMvMQcmOZpP%2F9xkw2YC1XAZ8%3D" alt="朝阳洞" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/395aa6c8b9f47bd72de9c8d581daa499~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=0e%2FlMvMQcmOZpP%2F9xkw2YC1XAZ8%3D" alt="朝阳洞" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -570,9 +866,9 @@
         </div>
         
         <!-- 朝东岩 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/2fdf128963bccede42f2606f2ea9aedd~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=2kS0ieBkhU2VmDnq3P0ryFzsReU%3D" alt="朝东岩" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/2fdf128963bccede42f2606f2ea9aedd~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=2kS0ieBkhU2VmDnq3P0ryFzsReU%3D" alt="朝东岩" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -604,9 +900,9 @@
         </div>
         
         <!-- 利川花千谷公园 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/adb3cebf467a2ad7e8404d426b0e8ff1~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=cwD8IlJn5SeVUAJtk4UVwR3zpFY%3D" alt="利川花千谷公园" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/adb3cebf467a2ad7e8404d426b0e8ff1~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=cwD8IlJn5SeVUAJtk4UVwR3zpFY%3D" alt="利川花千谷公园" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -638,9 +934,9 @@
         </div>
         
         <!-- 屏山峡谷 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/722f05da0bc5c547d7a81a94c07901d2~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=L6WZrAfnhlJQE3sOzs7WUd%2FqoTM%3D" alt="屏山峡谷" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/722f05da0bc5c547d7a81a94c07901d2~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=L6WZrAfnhlJQE3sOzs7WUd%2FqoTM%3D" alt="屏山峡谷" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -675,9 +971,9 @@
         </div>
         
         <!-- 地心谷 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/9d3e6f9934fd389b21e2f0392f7769f3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=rRVp5krvWJlr8WbvhQl6HkY0tRY%3D" alt="地心谷" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/9d3e6f9934fd389b21e2f0392f7769f3~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783953&x-signature=rRVp5krvWJlr8WbvhQl6HkY0tRY%3D" alt="地心谷" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -712,9 +1008,9 @@
         </div>
         
         <!-- 狮子关彭家寨 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/0f410f2ddb07d7f643859f6dda9c1872~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=QMVBuJUX87B5wudQjsSkYEGFrxY%3D" alt="狮子关彭家寨" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/0f410f2ddb07d7f643859f6dda9c1872~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783952&x-signature=QMVBuJUX87B5wudQjsSkYEGFrxY%3D" alt="狮子关彭家寨" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -749,9 +1045,9 @@
         </div>
         
         <!-- 曜天眼 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/2eae1fc57ee24ab7a8e5c24bc6f179ca~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783980&x-signature=xX6%2B6PXNGoYjGoc%2BXtawe7YsTVo%3D" alt="曜天眼" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/2eae1fc57ee24ab7a8e5c24bc6f179ca~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783980&x-signature=xX6%2B6PXNGoYjGoc%2BXtawe7YsTVo%3D" alt="曜天眼" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -786,9 +1082,9 @@
         </div>
         
         <!-- 鸡公岭飞拉达 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/pgc-image/ffdc602f8589411b835b7641518df94b~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=642AzFE5gWiIoh7VSQ7C%2F7ZrLnA%3D" alt="鸡公岭飞拉达" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/pgc-image/ffdc602f8589411b835b7641518df94b~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=642AzFE5gWiIoh7VSQ7C%2F7ZrLnA%3D" alt="鸡公岭飞拉达" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -823,9 +1119,9 @@
         </div>
         
         <!-- 梭布垭石林 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/pgc-image/8f58ecb638e74ccf810b2e65ed389822~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=eCFPcThRrHzG%2BCD8YQJ3jtmIv%2F8%3D" alt="梭布垭石林" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/pgc-image/8f58ecb638e74ccf810b2e65ed389822~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=eCFPcThRrHzG%2BCD8YQJ3jtmIv%2F8%3D" alt="梭布垭石林" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -860,9 +1156,9 @@
         </div>
         
         <!-- 伍家台茶园 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-64 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1ae506398ec34188d0fed7cbd7b2de7a~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=%2B7IMdBKop2dKmMk%2FJauPSAP2o3U%3D" alt="伍家台茶园" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/1ae506398ec34188d0fed7cbd7b2de7a~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788783979&x-signature=%2B7IMdBKop2dKmMk%2FJauPSAP2o3U%3D" alt="伍家台茶园" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -900,18 +1196,24 @@
   </section>
   
   <!-- 民宿推荐 -->
-  <section id="homestays" class="py-16 bg-neutral-50">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">精选民宿</h2>
+  <section id="homestays" class="py-20 bg-gradient-to-b from-neutral-50 to-white relative overflow-hidden">
+    <div class="absolute top-20 left-10 w-80 h-80 bg-gradient-to-br from-amber-50 to-transparent rounded-full pointer-events-none opacity-60"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-amber-400/40"></span>
+          <span class="text-xs tracking-[0.3em] text-amber-500/60 uppercase font-medium">Homestays</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-amber-400/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">精选民宿</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">在这些精心挑选的住宿中体验地道的当地生活</p>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- 山水民宿 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/cb6104582a1973f1b02031e3a825ad04~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=l%2BFS3L00YXqJgi%2FoBWyxuO5NRs8%3D" alt="山水民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/cb6104582a1973f1b02031e3a825ad04~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=l%2BFS3L00YXqJgi%2FoBWyxuO5NRs8%3D" alt="山水民宿" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -952,9 +1254,9 @@
         </div>
         
         <!-- 凉风小舍民宿 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c2352217690aae6c3699aa8e958ea604~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=vPs08Qn3pqZ3XAkbCzxGnAAaVLw%3D" alt="凉风小舍民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c2352217690aae6c3699aa8e958ea604~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=vPs08Qn3pqZ3XAkbCzxGnAAaVLw%3D" alt="凉风小舍民宿" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -995,9 +1297,9 @@
         </div>
         
         <!-- 利川天墅酒店 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c28d530541fa38db1dd41f46cd1d8611~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=S4ynOdmEadd8Mu5wmefFT7E5iH4%3D" alt="利川天墅酒店" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/c28d530541fa38db1dd41f46cd1d8611~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=S4ynOdmEadd8Mu5wmefFT7E5iH4%3D" alt="利川天墅酒店" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -1038,9 +1340,9 @@
         </div>
         
         <!-- 山夏·星野谧境泳池度假民宿 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/b737ff14afc4933cc75fd6521d8a85ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=OBJAHP%2FGq%2FcS%2FiBqUrL9Az1UETU%3D" alt="山夏·星野谧境泳池度假民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/b737ff14afc4933cc75fd6521d8a85ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767026&x-signature=OBJAHP%2FGq%2FcS%2FiBqUrL9Az1UETU%3D" alt="山夏·星野谧境泳池度假民宿" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -1081,9 +1383,9 @@
         </div>
         
         <!-- 龙船调湖居民宿 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/b8be692453062d81538ea79b9e8022d8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=7NDGmQ9E%2B40tRQIJxEeLPiY7n%2B4%3D" alt="龙船调湖居民宿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/b8be692453062d81538ea79b9e8022d8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=7NDGmQ9E%2B40tRQIJxEeLPiY7n%2B4%3D" alt="龙船调湖居民宿" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -1124,9 +1426,9 @@
         </div>
         
         <!-- 分水度假村 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300">
           <div class="h-48 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/9a9d717c1cbaa334b929e424980849ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=a57INRWn%2B0Ns7yuK1H5ZKGbGSa8%3D" alt="分水度假村" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/9a9d717c1cbaa334b929e424980849ee~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788767025&x-signature=a57INRWn%2B0Ns7yuK1H5ZKGbGSa8%3D" alt="分水度假村" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -1170,18 +1472,25 @@
   </section>
 
   <!-- 特色美食 -->
-  <section id="food" class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">特色美食</h2>
+  <section id="food" class="py-20 bg-white relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-200/40 to-transparent"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-red-50/50 to-transparent rounded-full translate-y-1/2 pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-red-400/40"></span>
+          <span class="text-xs tracking-[0.3em] text-red-400/60 uppercase font-medium">Local Cuisine</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-red-400/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">特色美食</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">品尝土家族美食的独特风味，这些是必尝菜品</p>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- 柏杨豆干 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/ecom-shop-material/giNoDJBe_m_0fe1ded7cf561659a57790574e226e5d_sx_901651_www800-800~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766354&x-signature=TJchjnZ2au0q9pKeS%2BA1R9aM524%3D" alt="柏杨豆干" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/ecom-shop-material/giNoDJBe_m_0fe1ded7cf561659a57790574e226e5d_sx_901651_www800-800~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766354&x-signature=TJchjnZ2au0q9pKeS%2BA1R9aM524%3D" alt="柏杨豆干" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">柏杨豆干</h3>
@@ -1210,9 +1519,9 @@
         </div>
         
         <!-- 利川莼菜 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/cd4028370d1f4da5b8656a9413e620c9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766353&x-signature=FV0uJuVNQeh7QQ%2BiPM82VfgMCqY%3D" alt="利川莼菜" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/cd4028370d1f4da5b8656a9413e620c9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788766353&x-signature=FV0uJuVNQeh7QQ%2BiPM82VfgMCqY%3D" alt="利川莼菜" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">利川莼菜</h3>
@@ -1241,9 +1550,9 @@
         </div>
         
         <!-- 根粑凉粉 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/0f1510f941a7cd83dcc1befe54660eae~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=dO8UzbDsg8ErcDzPeGYuZepEA1g%3D" alt="根粑凉粉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/0f1510f941a7cd83dcc1befe54660eae~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=dO8UzbDsg8ErcDzPeGYuZepEA1g%3D" alt="根粑凉粉" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">根粑凉粉</h3>
@@ -1272,9 +1581,9 @@
         </div>
         
         <!-- 包面 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/16ad88432ac995fe01b55cb88b2726da~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=zdujsK%2BununcDHF4fwQngKnMBPk%3D" alt="包面" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/16ad88432ac995fe01b55cb88b2726da~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=zdujsK%2BununcDHF4fwQngKnMBPk%3D" alt="包面" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">包面</h3>
@@ -1303,9 +1612,9 @@
         </div>
         
         <!-- 杂酱面 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/1994bffa3712b95f27d68e3e9b36c7a6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=AQ6vlFCoytZQJEZ5iDajXpp2HX4%3D" alt="杂酱面" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/1994bffa3712b95f27d68e3e9b36c7a6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=AQ6vlFCoytZQJEZ5iDajXpp2HX4%3D" alt="杂酱面" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">杂酱面</h3>
@@ -1334,9 +1643,9 @@
         </div>
         
         <!-- 土家烧饼 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/da95a89be2aaaf2bac8ed06db8308229~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=TvkWj9iIxcvIGdEukCIuQfSCtLs%3D" alt="土家烧饼" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/da95a89be2aaaf2bac8ed06db8308229~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770549&x-signature=TvkWj9iIxcvIGdEukCIuQfSCtLs%3D" alt="土家烧饼" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">土家烧饼</h3>
@@ -1365,9 +1674,9 @@
         </div>
         
         <!-- 油香儿 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/3a9bad0563899fdfca3c4b3f5a3c1de6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=o0Hx9ZENGaceo1XYtPyY2aNjrZg%3D" alt="油香儿" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/3a9bad0563899fdfca3c4b3f5a3c1de6~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=o0Hx9ZENGaceo1XYtPyY2aNjrZg%3D" alt="油香儿" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">油香儿</h3>
@@ -1396,9 +1705,9 @@
         </div>
         
         <!-- 炸洋芋 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/5266814bc96092f8f580d01ed78123e8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Kl1Bo8fBoMkNZ8rMJGM7VyIdUyI%3D" alt="炸洋芋" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/5266814bc96092f8f580d01ed78123e8~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Kl1Bo8fBoMkNZ8rMJGM7VyIdUyI%3D" alt="炸洋芋" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">炸洋芋</h3>
@@ -1427,9 +1736,9 @@
         </div>
         
         <!-- 格格 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/64685123563523cd6ce6e6a2973581a4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Tzx7kT0jsBghYo8Ju5qpXq9IRjw%3D" alt="格格" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/64685123563523cd6ce6e6a2973581a4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=Tzx7kT0jsBghYo8Ju5qpXq9IRjw%3D" alt="格格" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">格格</h3>
@@ -1458,9 +1767,9 @@
         </div>
         
         <!-- 黄凉粉 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/25ed4750b10ac7a3559ad3ef7bf8faec~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=YCLZDSzWywMNs9nNDDf3FUB3C2U%3D" alt="黄凉粉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/25ed4750b10ac7a3559ad3ef7bf8faec~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788770564&x-signature=YCLZDSzWywMNs9nNDDf3FUB3C2U%3D" alt="黄凉粉" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">黄凉粉</h3>
@@ -1489,9 +1798,9 @@
         </div>
         
         <!-- 渣海椒炒腊肉 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/41381049d6078473145cd31e1fbdf373~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772044&x-signature=JrBOUORSJfce%2FxpKYs3qMmmYHIo%3D" alt="渣海椒炒腊肉" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/41381049d6078473145cd31e1fbdf373~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772044&x-signature=JrBOUORSJfce%2FxpKYs3qMmmYHIo%3D" alt="渣海椒炒腊肉" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">渣海椒炒腊肉</h3>
@@ -1520,9 +1829,9 @@
         </div>
         
         <!-- 莼菜炖老母鸡 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/e3d4fb6a0dcab8f848fd33ce9f8910e5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=tr96s9N125xvaPQmOuh7fI3ewEo%3D" alt="莼菜炖老母鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/e3d4fb6a0dcab8f848fd33ce9f8910e5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772043&x-signature=tr96s9N125xvaPQmOuh7fI3ewEo%3D" alt="莼菜炖老母鸡" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">莼菜炖老母鸡</h3>
@@ -1551,9 +1860,9 @@
         </div>
         
         <!-- 菌之恋云南野生菌火锅 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/35af191999434a8c986a69c11a1410b4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784341&x-signature=a6%2Fmfph7bHTRmYLDunOESQfMi8U%3D" alt="菌之恋云南野生菌火锅" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/35af191999434a8c986a69c11a1410b4~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784341&x-signature=a6%2Fmfph7bHTRmYLDunOESQfMi8U%3D" alt="菌之恋云南野生菌火锅" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">菌之恋云南野生菌火锅</h3>
@@ -1591,9 +1900,9 @@
         </div>
         
         <!-- 山城柴火鸡 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/6706a437b5064661ab4def1588cc6eb9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=eB1RQ8nxp%2BIVSNL8h83iATVdmR0%3D" alt="山城柴火鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/6706a437b5064661ab4def1588cc6eb9~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=eB1RQ8nxp%2BIVSNL8h83iATVdmR0%3D" alt="山城柴火鸡" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">山城柴火鸡</h3>
@@ -1631,9 +1940,9 @@
         </div>
         
         <!-- 碎米鸡 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1359134163152404543~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=Melv8UjVzzVWeHD4KUu%2FRs9LkQM%3D" alt="碎米鸡" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1359134163152404543~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784299&x-signature=Melv8UjVzzVWeHD4KUu%2FRs9LkQM%3D" alt="碎米鸡" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">碎米鸡</h3>
@@ -1671,9 +1980,9 @@
         </div>
         
         <!-- 麻鸭豆皮 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p3-doubao-search-sign.byteimg.com/labis/d6470dcd9b20bcfc86692c669442e751~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784398&x-signature=sFfyyhGzaeLV%2Fyg2YiQjsWGG1os%3D" alt="麻鸭豆皮" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p3-doubao-search-sign.byteimg.com/labis/d6470dcd9b20bcfc86692c669442e751~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788784398&x-signature=sFfyyhGzaeLV%2Fyg2YiQjsWGG1os%3D" alt="麻鸭豆皮" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-2">麻鸭豆皮</h3>
@@ -1714,10 +2023,15 @@
   </section>
 
   <!-- 用户评价 -->
-  <section id="reviews" class="py-16 bg-neutral-50">
+  <section id="reviews" class="py-20 bg-gradient-to-b from-neutral-50 to-white">
     <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">游客反馈</h2>
+        <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-blue-400/40"></span>
+          <span class="text-xs tracking-[0.3em] text-blue-400/60 uppercase font-medium">Reviews</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-blue-400/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">游客反馈</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">看看其他游客对利川的真实评价和建议</p>
       </div>
       
@@ -1828,10 +2142,16 @@
   </section>
 
   <!-- 订单体验与下单 -->
-  <section id="orders" class="py-16 bg-white" x-data="orderPage()" x-init="init()">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-          <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">定制订单服务</h2>
+  <section id="orders" class="py-20 bg-white relative overflow-hidden" x-data="orderPage()" x-init="init()">
+    <div class="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-blue-50/60 to-transparent rounded-full -translate-y-1/3 translate-x-1/4 pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-14">
+          <div class="inline-flex items-center gap-3 mb-4">
+            <span class="w-10 h-px bg-gradient-to-r from-transparent to-green-400/40"></span>
+            <span class="text-xs tracking-[0.3em] text-green-500/60 uppercase font-medium">Orders</span>
+            <span class="w-10 h-px bg-gradient-to-l from-transparent to-green-400/40"></span>
+          </div>
+          <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">定制订单服务</h2>
           <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">展示当前订单数据，并提交您的旅行预订请求。</p>
         </div>
 
@@ -1944,10 +2264,16 @@
   </section>
 
   <!-- 自定义路线生成器 -->
-  <section id="custom-route" class="py-16 bg-neutral-50">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">定制行程规划</h2>
+  <section id="custom-route" class="py-20 bg-gradient-to-b from-neutral-50 to-white relative overflow-hidden">
+    <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-tr from-indigo-50/40 to-transparent rounded-full translate-y-1/2 pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-indigo-400/40"></span>
+          <span class="text-xs tracking-[0.3em] text-indigo-400/60 uppercase font-medium">Plan Your Trip</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-indigo-400/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">定制行程规划</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">告诉我们您的偏好，我们将为您生成个性化的旅行计划</p>
       </div>
       
@@ -2227,18 +2553,25 @@
   </section>
 
   <!-- 民俗文化 -->
-  <section id="culture" class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4 text-shadow">土家族文化与传统</h2>
+  <section id="culture" class="py-20 bg-white relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-200/30 to-transparent"></div>
+    <div class="absolute top-10 right-10 w-80 h-80 bg-gradient-to-bl from-purple-50/40 to-transparent rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="w-10 h-px bg-gradient-to-r from-transparent to-purple-400/40"></span>
+          <span class="text-xs tracking-[0.3em] text-purple-400/60 uppercase font-medium">Culture & Heritage</span>
+          <span class="w-10 h-px bg-gradient-to-l from-transparent to-purple-400/40"></span>
+        </div>
+        <h2 class="text-[clamp(2rem,3vw,3rem)] font-bold font-display text-neutral-600 mb-4">土家族文化与传统</h2>
         <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">沉浸在利川原住民丰富的文化遗产中</p>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- 龙船调 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p26-doubao-search-sign.byteimg.com/labis/f831fad9edabfd14d71e8b930980ce76~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=1QBbPcS9SgtSZK9bEs9EUv7VziU%3D" alt="龙船调表演" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p26-doubao-search-sign.byteimg.com/labis/f831fad9edabfd14d71e8b930980ce76~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=1QBbPcS9SgtSZK9bEs9EUv7VziU%3D" alt="龙船调表演" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -2272,9 +2605,9 @@
         </div>
         
         <!-- 肉连响 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/fb493f533db64317bd5c77f8b76e13c5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=Sr5DVnowDOkmmgcDag8xOCEQcyQ%3D" alt="肉连响表演" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/labis/image/fb493f533db64317bd5c77f8b76e13c5~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=Sr5DVnowDOkmmgcDag8xOCEQcyQ%3D" alt="肉连响表演" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -2308,9 +2641,9 @@
         </div>
         
         <!-- 利川灯歌 -->
-        <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-white rounded-xl overflow-hidden card-shadow card-enhanced hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
           <div class="h-48 overflow-hidden">
-            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/524ec6993f754c7c85483f748a003809~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=EeCEAKfSUjBBqG3Anb5%2BAxaEyHU%3D" alt="利川灯歌" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-xv4ileqgde/524ec6993f754c7c85483f748a003809~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1788772323&x-signature=EeCEAKfSUjBBqG3Anb5%2BAxaEyHU%3D" alt="利川灯歌" class="w-full h-full object-cover card-img-zoom transition-transform duration-500 hover:scale-110">
           </div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-2">
@@ -2386,8 +2719,10 @@
   </section>
 
   <!-- 底部区域 -->
-  <footer class="bg-neutral-600 text-white py-12">
-    <div class="container mx-auto px-4">
+  <footer class="bg-gradient-to-b from-neutral-700 to-neutral-800 text-white py-16 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary/5 to-transparent rounded-full pointer-events-none"></div>
+    <div class="container mx-auto px-4 relative z-10">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
           <div class="flex items-center space-x-2 mb-6">
@@ -2427,7 +2762,7 @@
           <h4 class="text-lg font-bold font-display mb-6">实用信息</h4>
           <ul class="space-y-3">
             <li><a href="./sub_page/traffic.html" class="text-neutral-300 hover:text-white transition-colors">交通方式</a></li>
-            <li><a href="https://www.tianqi.com/lichuan/" target="_blank" rel="noopener" class="text-neutral-300 hover:text-white transition-colors">天气</a></li>
+            <li><a href="./sub_page/weather.html" target="_blank" rel="noopener" class="text-neutral-300 hover:text-white transition-colors">天气</a></li>
             <li><a href="./sub_page/safety.html" class="text-neutral-300 hover:text-white transition-colors">安全提示</a></li>
             <li><a href="./sub_page/faq.html" class="text-neutral-300 hover:text-white transition-colors">常见问题</a></li>
             <li><a href="./sub_page/contact.html" class="text-neutral-300 hover:text-white transition-colors">联系我们</a></li>
@@ -3490,5 +3825,137 @@
       emptyTip.style.display = 'none';
     };
   </script>
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M10 4L4 10M10 4L16 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<!-- Scroll Reveal & Enhanced Interactions -->
+<script>
+(function() {
+  // ====== Scroll Reveal Observer ======
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  function initReveals() {
+    // Auto-add reveal classes to key elements
+    const selectors = [
+      '#attractions .card-shadow',
+      '#homestays .card-shadow',
+      '#food .card-shadow',
+      '#culture .card-shadow',
+      '#culture .bg-neutral-50 > div > div',
+      '#reviews .card-shadow',
+      '#orders .bg-neutral-50',
+      '#custom-route .bg-white.rounded-xl',
+      '.section-ornament'
+    ];
+
+    document.querySelectorAll(selectors.join(',')).forEach((el, i) => {
+      if (!el.classList.contains('reveal') && !el.classList.contains('reveal-scale')) {
+        el.classList.add('reveal');
+        el.style.transitionDelay = (i % 6) * 0.07 + 's';
+      }
+      revealObserver.observe(el);
+    });
+
+    // Section headers
+    document.querySelectorAll('.text-center.mb-12').forEach(el => {
+      el.classList.add('reveal');
+      revealObserver.observe(el);
+    });
+
+    // Stagger grids
+    document.querySelectorAll('#attractions .grid, #food .grid, #homestays .grid').forEach(el => {
+      // Don't re-add classes
+      if (!el.classList.contains('stagger-children')) {
+        // Observe individual children instead for better stagger
+        el.querySelectorAll(':scope > div').forEach((child, i) => {
+          child.classList.add('reveal');
+          child.style.transitionDelay = (i % 4) * 0.1 + 's';
+          revealObserver.observe(child);
+        });
+      }
+    });
+  }
+
+  // ====== Navbar scroll effect ======
+  const navbar = document.getElementById('navbar');
+  let lastScroll = 0;
+  window.addEventListener('scroll', function() {
+    const scrollY = window.scrollY;
+    // Glass effect
+    if (scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+    lastScroll = scrollY;
+
+    // Back to top
+    const btn = document.getElementById('backToTop');
+    if (scrollY > 500) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+  }, { passive: true });
+
+  // ====== Active nav link highlight ======
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinks.forEach(link => {
+          link.classList.toggle('text-primary', link.getAttribute('href') === '#' + id);
+          link.classList.toggle('font-semibold', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '-80px 0px -60% 0px' });
+
+  sections.forEach(section => navObserver.observe(section));
+
+  // ====== Image lazy loading with fade ======
+  document.querySelectorAll('img').forEach(img => {
+    if (img.loading !== 'lazy') {
+      img.style.transition = 'opacity 0.5s ease';
+      if (!img.complete) {
+        img.style.opacity = '0';
+        img.addEventListener('load', () => { img.style.opacity = '1'; });
+        img.addEventListener('error', () => { img.style.opacity = '0.5'; });
+      }
+    }
+  });
+
+  // ====== Counter animation for stats ======
+  function animateCounter(el, target, duration) {
+    const start = 0;
+    const startTime = performance.now();
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(start + (target - start) * eased);
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReveals);
+  } else {
+    initReveals();
+  }
+})();
+</script>
 </body>
 </html>

@@ -1,10 +1,10 @@
-<!-- 安全提示页面 - 升级版 -->
+<!-- 天气查询页面 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>安全提示 - 利川旅游指南</title>
+  <title>天气查询 - 利川旅游指南</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -46,94 +46,64 @@
 
   <section class="page-hero pt-28 pb-16 md:pt-32 md:pb-20 text-center text-white">
     <div class="container mx-auto px-4 relative z-10">
-      <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 hero-anim"><i class="fa fa-shield"></i> 安全须知</div>
-      <h1 class="text-3xl md:text-4xl font-bold font-display mb-4 hero-anim hero-anim-d1">安全提示</h1>
-      <p class="text-white/80 max-w-xl mx-auto hero-anim hero-anim-d2">出行在外，安全第一。请仔细阅读以下提示</p>
+      <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 hero-anim"><i class="fa fa-cloud"></i> 实时天气</div>
+      <h1 class="text-3xl md:text-4xl font-bold font-display mb-4 hero-anim hero-anim-d1">天气查询</h1>
+      <p class="text-white/80 max-w-xl mx-auto hero-anim hero-anim-d2">出行前查看天气，合理安排您的旅行计划</p>
     </div>
   </section>
 
   <main class="container mx-auto px-4 py-16 flex-1">
     <div class="max-w-4xl mx-auto">
-      <!-- 紧急联系卡片 -->
-      <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-8 text-white mb-10 reveal shadow-lg shadow-red-500/20">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center"><i class="fa fa-phone text-2xl"></i></div>
+      <!-- 天气插件 -->
+      <div class="bg-white rounded-2xl card-shadow p-8 reveal mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
+            <i class="fa fa-cloud text-blue-600 text-2xl"></i>
+          </div>
           <div>
-            <h2 class="text-xl font-bold font-display">紧急求助电话</h2>
-            <p class="text-white/70 text-sm">遇到紧急情况请立即拨打</p>
+            <h2 class="text-xl font-bold font-display text-neutral-700">实时天气预报</h2>
+            <p class="text-neutral-400 text-sm mt-1">数据来源于中国天气网，实时更新</p>
           </div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-white/15 rounded-xl p-3 text-center backdrop-blur-sm">
-            <div class="text-2xl font-bold">110</div>
-            <div class="text-sm text-white/70">报警电话</div>
-          </div>
-          <div class="bg-white/15 rounded-xl p-3 text-center backdrop-blur-sm">
-            <div class="text-2xl font-bold">120</div>
-            <div class="text-sm text-white/70">急救电话</div>
-          </div>
-          <div class="bg-white/15 rounded-xl p-3 text-center backdrop-blur-sm">
-            <div class="text-2xl font-bold">119</div>
-            <div class="text-sm text-white/70">消防电话</div>
-          </div>
-          <div class="bg-white/15 rounded-xl p-3 text-center backdrop-blur-sm">
-            <div class="text-lg font-bold">0718-7282222</div>
-            <div class="text-sm text-white/70">利川人民医院</div>
-          </div>
+        <div class="flex justify-center overflow-hidden rounded-xl">
+          <iframe width="680" height="260" src="https://i.tianqi.com/?c=code&a=getcode&id=13&py=lichuan&icon=1" frameborder="0" class="max-w-full"></iframe>
         </div>
       </div>
-
-      <!-- 安全提示卡片 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- 出行建议 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal">
-          <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mb-5">
-            <i class="fa fa-car text-orange-500 text-2xl"></i>
+          <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-sun-o text-amber-500 text-2xl"></i>
           </div>
-          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">出行安全</h2>
-          <ul class="space-y-3 text-neutral-500">
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>山区道路弯多坡陡，自驾请减速慢行</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>雨天路滑，注意避让行人和非机动车</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>夜间行车开近光灯，会车时关闭远光灯</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>乘坐公共交通请系好安全带</li>
+          <h2 class="text-lg font-bold font-display text-neutral-700 mb-3">晴天出行</h2>
+          <ul class="space-y-2 text-neutral-500 text-sm">
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>注意防晒，携带遮阳帽和防晒霜</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>多补充水分，随身携带饮用水</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>适合游览户外景点和徒步</li>
           </ul>
         </div>
 
         <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.1s">
-          <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mb-5">
-            <i class="fa fa-tree text-green-600 text-2xl"></i>
+          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-umbrella text-blue-500 text-2xl"></i>
           </div>
-          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">景区安全</h2>
-          <ul class="space-y-3 text-neutral-500">
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>游览溶洞请跟紧队伍，不要偏离游览路线</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>峡谷、栈道等区域注意防滑防跌</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>瀑布和水域附近请勿下水游泳</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>拍照时注意脚下安全，切勿在悬崖边冒险</li>
+          <h2 class="text-lg font-bold font-display text-neutral-700 mb-3">雨天出行</h2>
+          <ul class="space-y-2 text-neutral-500 text-sm">
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>携带雨具，穿防滑鞋</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>山区道路湿滑，自驾需谨慎</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>推荐游览溶洞等室内景点</li>
           </ul>
         </div>
 
         <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.2s">
-          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5">
-            <i class="fa fa-medkit text-blue-600 text-2xl"></i>
+          <div class="w-14 h-14 bg-cyan-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-snowflake-o text-cyan-500 text-2xl"></i>
           </div>
-          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">健康防护</h2>
-          <ul class="space-y-3 text-neutral-500">
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>景区人多时建议佩戴口罩</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>携带常用药品：感冒药、肠胃药、创可贴</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>注意饮食卫生，避免食用不洁食物</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>山区蚊虫多，建议携带驱蚊用品</li>
-          </ul>
-        </div>
-
-        <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.3s">
-          <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-5">
-            <i class="fa fa-shield text-purple-600 text-2xl"></i>
-          </div>
-          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">财物安全</h2>
-          <ul class="space-y-3 text-neutral-500">
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>贵重物品随身携带，不要放在车内显眼处</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>景区购物注意辨别真伪，理性消费</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>保管好身份证件，建议携带复印件</li>
-            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-1 text-sm"></i>手机保持电量充足，保存紧急联系人</li>
+          <h2 class="text-lg font-bold font-display text-neutral-700 mb-3">低温出行</h2>
+          <ul class="space-y-2 text-neutral-500 text-sm">
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>注意保暖，穿着厚实外套</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>溶洞内恒温14-18°C，需备外套</li>
+            <li class="flex items-start gap-2"><i class="fa fa-check-circle text-[#165DFF] mt-0.5 text-xs"></i>冬季可体验雪景和民俗年味</li>
           </ul>
         </div>
       </div>
@@ -156,6 +126,7 @@
         <a href="safety.html" class="text-neutral-400 hover:text-white transition-colors text-sm">安全</a>
         <a href="faq.html" class="text-neutral-400 hover:text-white transition-colors text-sm">FAQ</a>
         <a href="contact.html" class="text-neutral-400 hover:text-white transition-colors text-sm">联系</a>
+        <a href="weather.html" class="text-neutral-400 hover:text-white transition-colors text-sm">天气</a>
       </div>
       <div class="border-t border-neutral-600 pt-4 text-neutral-500 text-xs">&copy; 2026 利川旅游指南. 保留所有权利.</div>
     </div>

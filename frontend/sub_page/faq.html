@@ -1,62 +1,188 @@
-<!-- 常见问题页面 -->
+<!-- 常见问题页面 - 升级版 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>利川常见问题</title>
+  <title>常见问题 - 利川旅游指南</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Inter, system-ui, sans-serif; }
+    h1,h2,h3,h4,h5,h6,.font-display { font-family: 'Noto Serif SC','Montserrat',serif !important; }
+    body,p,span,a,li,input,textarea,select,button { font-family: 'Noto Sans SC','Inter',-apple-system,sans-serif; }
     .card-shadow { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
-    .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .card-enhanced { transition: transform 0.4s cubic-bezier(.25,.46,.45,.94), box-shadow 0.4s ease; }
+    .card-enhanced:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    #navbar { transition: all 0.3s; }
+    #navbar.scrolled { background: rgba(255,255,255,0.88) !important; backdrop-filter: blur(20px); box-shadow: 0 1px 30px rgba(0,0,0,0.06); }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .back-to-top { position:fixed;bottom:32px;right:32px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#165DFF,#00B42A);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(22,93,255,.3);z-index:99;opacity:0;transform:translateY(20px);transition:all .35s;pointer-events:none; }
+    .back-to-top.show { opacity:1;transform:translateY(0);pointer-events:all; }
+    html { scroll-behavior: smooth; }
+    .page-hero { background: linear-gradient(135deg, #165DFF 0%, #00B42A 100%); position: relative; overflow: hidden; }
+    .page-hero::after { content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,0.06)'/%3E%3C/svg%3E"); }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+    .hero-anim { animation: fadeInUp 0.8s ease-out both; }
+    .hero-anim-d1 { animation-delay: 0.15s; }
+    .hero-anim-d2 { animation-delay: 0.3s; }
+    /* FAQ accordion */
+    .faq-item { border: 1px solid #E4E7ED; border-radius: 16px; overflow: hidden; transition: all 0.3s; }
+    .faq-item:hover { border-color: #165DFF40; box-shadow: 0 4px 20px rgba(22,93,255,0.06); }
+    .faq-item.open { border-color: #165DFF40; background: #F8FAFF; }
+    .faq-q { cursor: pointer; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .faq-q:hover { background: #F5F7FA; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 24px 20px; }
+    .faq-icon { transition: transform 0.3s; }
+    .faq-item.open .faq-icon { transform: rotate(180deg); }
   </style>
 </head>
 <body class="bg-neutral-100 text-neutral-600 min-h-screen flex flex-col">
-  <!-- 顶部导航栏简化版 -->
-  <header class="w-full bg-white nav-shadow">
-    <div class="container mx-auto px-4 py-4 flex items-center">
-      <i class="fa fa-question-circle text-blue-600 text-2xl mr-2"></i>
-      <span class="text-xl font-bold font-display text-neutral-600">利川旅游指南</span>
+  <header id="navbar" class="fixed w-full bg-white z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-2 group">
+        <i class="fa fa-map-signs text-[#165DFF] text-2xl group-hover:scale-110 transition-transform"></i>
+        <h1 class="text-xl font-bold font-display text-neutral-600">利川旅游指南</h1>
+      </a>
+      <a href="../index.html" class="hidden md:flex items-center gap-2 text-sm text-neutral-700 font-medium hover:text-[#165DFF] transition-colors"><i class="fa fa-home"></i> 返回首页</a>
+      <button id="menu-toggle" class="md:hidden text-neutral-600"><i class="fa fa-bars text-xl"></i></button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-neutral-200">
+      <div class="container mx-auto px-4 py-3"><a href="../index.html" class="block text-neutral-700 font-medium hover:text-[#165DFF] py-2"><i class="fa fa-home mr-2"></i>返回首页</a></div>
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-12 flex-1">
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl card-shadow p-8">
-      <h1 class="text-3xl font-bold mb-8 text-blue-600 text-shadow text-center">常见问题</h1>
-      <ul class="space-y-8">
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-calendar text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">利川最佳旅游季节？</h2></div>
-          <p class="text-neutral-600 text-center">5-10月气候最为凉爽，适合避暑；冬季可体验雪景和民俗。</p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-ticket text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">景区门票怎么买？</h2></div>
-          <p class="text-neutral-600 text-center">可通过携程、去哪儿、同程等平台在线预订，也可现场购票。</p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-cutlery text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">有哪些特色美食？</h2></div>
-          <p class="text-neutral-600 text-center">推荐柏杨豆干、腊猪蹄火锅、麻鸭豆皮、凉粉等。</p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-user text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">如何联系当地导游？</h2></div>
-          <p class="text-neutral-600 text-center">可通过携程、马蜂窝等平台预约本地导游服务。</p>
-        </li>
-      </ul>
-      <div class="text-center mt-10">
-        <a href="../index.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-all font-medium shadow-md inline-block"><i class="fa fa-home mr-2"></i>返回首页</a>
+  <section class="page-hero pt-28 pb-16 md:pt-32 md:pb-20 text-center text-white">
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 hero-anim"><i class="fa fa-question-circle"></i> 帮助中心</div>
+      <h1 class="text-3xl md:text-4xl font-bold font-display mb-4 hero-anim hero-anim-d1">常见问题</h1>
+      <p class="text-white/80 max-w-xl mx-auto hero-anim hero-anim-d2">关于利川旅游的热门问答，助您轻松出行</p>
+    </div>
+  </section>
+
+  <main class="container mx-auto px-4 py-16 flex-1">
+    <div class="max-w-3xl mx-auto space-y-4">
+      <!-- FAQ 1 -->
+      <div class="faq-item bg-white reveal open">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-calendar text-blue-600"></i></div>
+            <span class="font-semibold text-neutral-700">利川最佳旅游季节？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          <strong class="text-neutral-600">5-10月</strong>是最佳旅游季节，夏季平均气温仅 22℃，是绝佳的避暑胜地。冬季（12-2月）可体验雪景和民俗年味，别有一番风味。春季油菜花和秋季红叶也各具特色。
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="faq-item bg-white reveal" style="transition-delay:0.05s">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-ticket text-emerald-600"></i></div>
+            <span class="font-semibold text-neutral-700">景区门票怎么买？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          可通过<strong class="text-neutral-600">携程、去哪儿、同程</strong>等平台在线预订，享受优惠价格。也可在景区售票处现场购票。建议提前在线预订，尤其是节假日高峰期，部分景区会限流。
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="faq-item bg-white reveal" style="transition-delay:0.1s">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-cutlery text-amber-600"></i></div>
+            <span class="font-semibold text-neutral-700">有哪些特色美食推荐？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          必吃清单：<strong class="text-neutral-600">柏杨豆干</strong>（300年非遗）、<strong class="text-neutral-600">腊猪蹄火锅</strong>、<strong class="text-neutral-600">根粑凉粉</strong>、<strong class="text-neutral-600">包面</strong>、<strong class="text-neutral-600">渣海椒炒腊肉</strong>、<strong class="text-neutral-600">莼菜炖老母鸡</strong>。详细美食攻略请查看首页"特色美食"板块。
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="faq-item bg-white reveal" style="transition-delay:0.15s">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-user text-purple-600"></i></div>
+            <span class="font-semibold text-neutral-700">如何联系当地导游？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          可通过<strong class="text-neutral-600">携程、马蜂窝</strong>等平台预约本地导游服务。也可通过首页"定制订单服务"提交需求，我们会为您匹配专业导游。土家族文化体验建议选择当地持证导游。
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="faq-item bg-white reveal" style="transition-delay:0.2s">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-bed text-red-500"></i></div>
+            <span class="font-semibold text-neutral-700">住宿怎么选择？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          利川住宿选择丰富：<strong class="text-neutral-600">市区酒店</strong>（交通便利，靠近火车站）、<strong class="text-neutral-600">景区民宿</strong>（体验土家风情）、<strong class="text-neutral-600">度假村</strong>（高端放松）。夏季避暑旺季建议提前2-3周预订。详见首页"精选民宿"板块。
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="faq-item bg-white reveal" style="transition-delay:0.25s">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa fa-suitcase text-teal-600"></i></div>
+            <span class="font-semibold text-neutral-700">需要带什么装备？</span>
+          </div>
+          <i class="fa fa-chevron-down fa-icon text-neutral-400"></i>
+        </div>
+        <div class="faq-a text-neutral-500 leading-relaxed">
+          <strong class="text-neutral-600">夏季</strong>：薄外套（山区早晚凉）、防晒霜、雨具、舒适运动鞋。<strong class="text-neutral-600">冬季</strong>：保暖衣物、防滑鞋。<strong class="text-neutral-600">溶洞</strong>：洞内恒温14-18℃，即使夏天也建议带外套。常备药品（肠胃药、晕车药、创可贴）也建议携带。
+        </div>
+      </div>
+
+      <div class="text-center mt-12 reveal">
+        <a href="../index.html" class="inline-flex items-center gap-2 bg-[#165DFF] hover:bg-[#165DFF]/90 text-white px-8 py-3.5 rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-500/20 font-medium">
+          <i class="fa fa-home"></i> 返回首页
+        </a>
       </div>
     </div>
   </main>
 
-  <footer class="bg-neutral-600 text-white py-8 mt-16">
+  <footer class="bg-gradient-to-b from-neutral-700 to-neutral-800 text-white py-12">
     <div class="container mx-auto px-4 text-center">
-      <div class="mb-4">
-        <span class="font-bold">利川旅游指南</span> | 实用信息
+      <div class="flex items-center justify-center gap-2 mb-3"><i class="fa fa-map-signs text-[#165DFF]"></i><span class="font-bold font-display text-lg">利川旅游指南</span></div>
+      <p class="text-neutral-400 text-sm mb-6">您探索中国美丽城市利川的综合指南</p>
+      <div class="flex justify-center gap-6 mb-6">
+        <a href="../index.html" class="text-neutral-400 hover:text-white transition-colors text-sm">首页</a>
+        <a href="traffic.html" class="text-neutral-400 hover:text-white transition-colors text-sm">交通</a>
+        <a href="safety.html" class="text-neutral-400 hover:text-white transition-colors text-sm">安全</a>
+        <a href="faq.html" class="text-neutral-400 hover:text-white transition-colors text-sm">FAQ</a>
+        <a href="contact.html" class="text-neutral-400 hover:text-white transition-colors text-sm">联系</a>
       </div>
-      <div class="text-neutral-300 text-sm">&copy; 2026 利川旅游指南. 保留所有权利.</div>
+      <div class="border-t border-neutral-600 pt-4 text-neutral-500 text-xs">&copy; 2026 利川旅游指南. 保留所有权利.</div>
     </div>
   </footer>
+
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M10 4L4 10M10 4L16 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <script>
+    document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+      document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 400);
+    }, { passive: true });
+    const obs = new IntersectionObserver(e => e.forEach(i => { if (i.isIntersecting) i.target.classList.add('visible'); }), { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
 </body>
 </html>

@@ -3,38 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>利川旅游 - 管理后台登录</title>
+    <title>管理后台登录 - 利川旅游指南</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+      h1,h2,h3,h4,h5,h6 { font-family: 'Noto Serif SC',serif !important; }
+      body,input,button,label { font-family: 'Noto Sans SC',sans-serif; }
+      @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+      .login-anim { animation: fadeInUp 0.7s ease-out both; }
+      .login-anim-d1 { animation-delay: 0.15s; }
+      .login-anim-d2 { animation-delay: 0.3s; }
+      .login-anim-d3 { animation-delay: 0.45s; }
+      /* Deep gradient background */
+      .bg-login {
+        background: linear-gradient(135deg, #0d2b6e 0%, #165DFF 30%, #0a7e4d 70%, #064e3b 100%);
+        position: relative;
+        min-height: 100vh;
+      }
+      .bg-login::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
+      }
+      /* Floating orbs */
+      @keyframes float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-20px) scale(1.05)} }
+      .orb { animation: float 7s ease-in-out infinite; border-radius: 50%; position: absolute; pointer-events: none; }
+      .orb-1 { width: 300px; height: 300px; top: -80px; left: -60px; background: radial-gradient(circle, rgba(22,93,255,0.3), transparent 70%); }
+      .orb-2 { width: 200px; height: 200px; bottom: -40px; right: -30px; background: radial-gradient(circle, rgba(0,180,42,0.25), transparent 70%); animation-delay: 2s; animation-duration: 8s; }
+      .orb-3 { width: 150px; height: 150px; top: 40%; right: 15%; background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%); animation-delay: 4s; animation-duration: 6s; }
+      /* Button pulse */
+      @keyframes btnPulse { 0%,100%{box-shadow:0 4px 24px rgba(22,93,255,0.4)} 50%{box-shadow:0 4px 36px rgba(22,93,255,0.6)} }
+      .btn-pulse { animation: btnPulse 2.5s ease-in-out infinite; }
+    </style>
 </head>
-<body class="bg-neutral-100">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-96">
-            <div class="text-center mb-8">
-                <i class="fa fa-map-signs text-[#165DFF] text-4xl mb-4"></i>
-                <h1 class="text-2xl font-bold text-neutral-600">管理后台登录</h1>
-                <p class="text-neutral-400 text-sm mt-2">利川旅游指南</p>
+<body class="bg-login flex items-center justify-center p-4">
+    <!-- Floating orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="relative z-10 w-full max-w-md">
+        <!-- Login Card -->
+        <div class="bg-white rounded-3xl shadow-2xl shadow-black/20 p-8 md:p-10 login-anim">
+            <div class="text-center mb-8 login-anim-d1">
+                <!-- Logo: solid dark background for high contrast -->
+                <div class="w-16 h-16 bg-[#165DFF] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/40">
+                    <i class="fa fa-map-signs text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-neutral-800 mb-1">管理后台</h1>
+                <p class="text-neutral-500 text-sm">利川旅游指南 · 管理系统</p>
             </div>
             
-            <div id="error-message" class="bg-red-100 text-red-600 p-3 rounded-lg mb-4 hidden"></div>
+            <div id="error-message" class="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-5 hidden text-sm">
+                <i class="fa fa-exclamation-circle mr-1"></i> <span id="error-text"></span>
+            </div>
             
-            <form id="login-form">
-                <div class="mb-4">
-                    <label class="block text-neutral-600 mb-2">用户名</label>
-                    <input type="text" id="username" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#165DFF] focus:border-transparent" required>
+            <form id="login-form" class="space-y-5 login-anim-d2">
+                <div>
+                    <label class="block text-neutral-700 font-medium mb-2 text-sm">用户名</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"><i class="fa fa-user"></i></span>
+                        <input type="text" id="username" class="w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all text-neutral-800 placeholder:text-neutral-400" placeholder="请输入用户名" required>
+                    </div>
                 </div>
                 
-                <div class="mb-6">
-                    <label class="block text-neutral-600 mb-2">密码</label>
-                    <input type="password" id="password" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#165DFF] focus:border-transparent" required>
+                <div>
+                    <label class="block text-neutral-700 font-medium mb-2 text-sm">密码</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"><i class="fa fa-lock"></i></span>
+                        <input type="password" id="password" class="w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all text-neutral-800 placeholder:text-neutral-400" placeholder="请输入密码" required>
+                    </div>
                 </div>
                 
-                <button type="submit" id="login-btn" class="w-full bg-[#165DFF] hover:bg-[#165DFF]/90 text-white py-3 rounded-lg transition-colors">
-                    <i class="fa fa-sign-in mr-2"></i> 登录
+                <!-- Login button: solid, high contrast, pulse glow -->
+                <button type="submit" id="login-btn" class="w-full bg-[#165DFF] hover:bg-[#1248CC] text-white py-3.5 rounded-xl transition-all font-bold text-base shadow-lg btn-pulse transform hover:scale-[1.02] active:scale-[0.98] login-anim-d3">
+                    <i class="fa fa-sign-in mr-2"></i> 登 录
                 </button>
             </form>
-            
         </div>
+
+        <!-- Footer -->
+        <p class="text-center text-white/50 text-xs mt-6 login-anim-d3">© 2026 利川旅游指南 · 内部管理系统</p>
     </div>
 
     <script>
@@ -44,6 +95,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
             const loginBtn = document.getElementById('login-btn');
             
             errorMsg.classList.add('hidden');
@@ -63,14 +115,14 @@
                     sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
                     window.location.href = 'dashboard.html';
                 } else {
-                    errorMsg.textContent = result.message || '登录失败';
+                    errorText.textContent = result.message || '用户名或密码错误';
                     errorMsg.classList.remove('hidden');
                 }
             } catch (error) {
-                errorMsg.textContent = '网络错误，请稍后重试';
+                errorText.textContent = '网络错误，请稍后重试';
                 errorMsg.classList.remove('hidden');
             } finally {
-                loginBtn.innerHTML = '<i class="fa fa-sign-in mr-2"></i> 登录';
+                loginBtn.innerHTML = '<i class="fa fa-sign-in mr-2"></i> 登 录';
                 loginBtn.disabled = false;
             }
         });

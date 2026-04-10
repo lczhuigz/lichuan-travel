@@ -3,245 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>利川旅游 - 评价管理</title>
+    <title>利川旅游 - 管理后台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+      h1,h2,h3,h4,h5,h6 { font-family: 'Noto Serif SC',serif !important; }
+      body,input,button,label,select,textarea { font-family: 'Noto Sans SC',sans-serif; }
+      /* Glass navbar */
+      #navbar { transition: all 0.3s; }
+      #navbar.scrolled { background: rgba(255,255,255,0.92) !important; backdrop-filter: blur(16px); box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+      /* Card hover */
+      .stat-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+      .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+      /* Row hover */
+      .row-hover { transition: background 0.2s ease; }
+      .row-hover:hover { background: #F8FAFF !important; }
+      /* Checkbox custom */
+      .checkbox-custom {
+        appearance: none; -webkit-appearance: none;
+        width: 1.25rem; height: 1.25rem;
+        border: 2px solid #d1d5db; border-radius: 0.375rem;
+        background-color: white; cursor: pointer; transition: all 0.2s;
+      }
+      .checkbox-custom:checked {
+        background-color: #165DFF; border-color: #165DFF;
+        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
+      }
+      .checkbox-custom:focus { outline: none; box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.4); }
+      /* Smooth scroll */
+      html { scroll-behavior: smooth; }
+      /* Button active */
+      .btn-active { background: #165DFF !important; color: white !important; border-color: #165DFF !important; }
+      .btn-inactive { background: white; color: #374151; border: 1px solid #E5E7EB; }
+      .btn-inactive:hover { background: #F9FAFB; }
+      /* Fade in */
+      @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+      .fade-in { animation: fadeIn 0.4s ease-out both; }
+    </style>
 </head>
-<body class="bg-neutral-100">
+<body class="bg-neutral-50 min-h-screen flex flex-col">
     <!-- 导航栏 -->
-    <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fa fa-map-signs text-[#165DFF] text-2xl"></i>
-                <h1 class="text-xl font-bold text-neutral-600">利川旅游管理后台</h1>
+    <nav id="navbar" class="fixed w-full bg-white z-50 shadow-sm">
+        <div class="px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 bg-[#165DFF] rounded-xl flex items-center justify-center shadow-sm shadow-blue-500/20">
+                    <i class="fa fa-map-signs text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-neutral-800 leading-tight">利川旅游管理后台</h1>
+                    <p class="text-xs text-neutral-400 leading-tight">Dashboard</p>
+                </div>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="text-neutral-500" id="admin-name">管理员</span>
-                <button onclick="logout()" class="text-neutral-500 hover:text-[#165DFF]">
+                <div class="hidden sm:flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg">
+                    <div class="w-7 h-7 bg-[#165DFF] rounded-full flex items-center justify-center">
+                        <i class="fa fa-user text-white text-xs"></i>
+                    </div>
+                    <span class="text-sm text-neutral-600 font-medium" id="admin-name">管理员</span>
+                </div>
+                <button onclick="logout()" class="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50">
                     <i class="fa fa-sign-out"></i> 退出
                 </button>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="px-4 sm:px-6 lg:px-8 pt-20 pb-8 flex-1">
         <!-- 统计卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-            <div class="bg-white rounded-lg p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-neutral-400 text-sm">总评价数</p>
-                        <p class="text-2xl font-bold text-neutral-600" id="total-count">0</p>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-5">
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-comments text-blue-500 text-xs"></i>
                     </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <i class="fa fa-comments text-blue-500 text-xl"></i>
-                    </div>
+                    <p class="text-neutral-400 text-xs">总评价</p>
                 </div>
+                <p class="text-xl font-bold text-neutral-800" id="total-count">0</p>
             </div>
-            
-            <div class="bg-white rounded-lg p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-neutral-400 text-sm">待审核</p>
-                        <p class="text-2xl font-bold text-yellow-600" id="pending-count">0</p>
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-amber-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-clock-o text-amber-500 text-xs"></i>
                     </div>
-                    <div class="bg-yellow-100 p-3 rounded-full">
-                        <i class="fa fa-clock-o text-yellow-500 text-xl"></i>
-                    </div>
+                    <p class="text-neutral-400 text-xs">待审核</p>
                 </div>
+                <p class="text-xl font-bold text-amber-600" id="pending-count">0</p>
             </div>
-            
-            <div class="bg-white rounded-lg p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-neutral-400 text-sm">总订单数</p>
-                        <p class="text-2xl font-bold text-[#165DFF]" id="total-orders">0</p>
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-shopping-cart text-[#165DFF] text-xs"></i>
                     </div>
-                    <div class="bg-[#165DFF]/10 p-3 rounded-full">
-                        <i class="fa fa-shopping-cart text-[#165DFF] text-xl"></i>
-                    </div>
+                    <p class="text-neutral-400 text-xs">总订单</p>
                 </div>
+                <p class="text-xl font-bold text-[#165DFF]" id="total-orders">0</p>
             </div>
-            
-            <div class="bg-white rounded-lg p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-neutral-400 text-sm">已确认订单</p>
-                        <p class="text-2xl font-bold text-green-600" id="confirmed-orders">0</p>
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-check-circle text-emerald-500 text-xs"></i>
                     </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <i class="fa fa-check-circle text-green-500 text-xl"></i>
-                    </div>
+                    <p class="text-neutral-400 text-xs">已确认</p>
                 </div>
+                <p class="text-xl font-bold text-emerald-600" id="confirmed-orders">0</p>
             </div>
-            
-            <div class="bg-white rounded-lg p-6 shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-neutral-400 text-sm">平均评分</p>
-                        <p class="text-2xl font-bold text-[#165DFF]" id="avg-rating">0.0</p>
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-star text-indigo-500 text-xs"></i>
                     </div>
-                    <div class="bg-[#165DFF]/10 p-3 rounded-full">
-                        <i class="fa fa-star text-[#165DFF] text-xl"></i>
-                    </div>
+                    <p class="text-neutral-400 text-xs">评分</p>
                 </div>
+                <p class="text-xl font-bold text-indigo-600" id="avg-rating">0.0</p>
+            </div>
+            <div class="stat-card bg-white rounded-xl p-3 shadow-sm border border-neutral-100">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
+                        <i class="fa fa-envelope text-purple-500 text-xs"></i>
+                    </div>
+                    <p class="text-neutral-400 text-xs">未读留言</p>
+                </div>
+                <p class="text-xl font-bold text-purple-600" id="unread-messages">0</p>
             </div>
         </div>
 
-        <div class="flex flex-wrap gap-3 mb-6">
-            <button id="section-reviews" onclick="switchSection('reviews')" class="bg-[#165DFF] text-white px-5 py-3 rounded-lg font-medium shadow-sm">
-                评价管理
+        <!-- Section 切换 -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button id="section-reviews" onclick="switchSection('reviews')" class="btn-active px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                <i class="fa fa-comments mr-1.5"></i>评价管理
             </button>
-            <button id="section-orders" onclick="switchSection('orders')" class="bg-white text-neutral-600 border border-neutral-200 px-5 py-3 rounded-lg font-medium shadow-sm hover:bg-neutral-50">
-                订单管理
+            <button id="section-orders" onclick="switchSection('orders')" class="btn-inactive px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                <i class="fa fa-shopping-cart mr-1.5"></i>订单管理
+            </button>
+            <button id="section-messages" onclick="switchSection('messages')" class="btn-inactive px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                <i class="fa fa-envelope mr-1.5"></i>留言管理 <span id="unread-badge" class="ml-1 bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full text-xs font-bold hidden">0</span>
             </button>
         </div>
 
         <div id="review-section">
-            <!-- 标签页切换 -->
-            <div class="bg-white rounded-lg shadow mb-6">
-                <div class="border-b border-neutral-200">
-                <nav class="flex -mb-px">
-                    <button onclick="switchTab('pending')" id="tab-pending" class="px-6 py-3 text-[#165DFF] border-b-2 border-[#165DFF] font-medium">
-                        待审核 <span id="pending-badge" class="ml-2 bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs">0</span>
+            <!-- 标签页 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 mb-4 overflow-hidden">
+                <div class="border-b border-neutral-100 px-2">
+                    <nav class="flex -mb-px">
+                        <button onclick="switchTab('pending')" id="tab-pending" class="px-4 py-2.5 text-[#165DFF] border-b-2 border-[#165DFF] font-medium text-sm transition-colors">
+                            待审核 <span id="pending-badge" class="ml-1.5 bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                        </button>
+                        <button onclick="switchTab('approved')" id="tab-approved" class="px-4 py-2.5 text-neutral-400 hover:text-[#165DFF] border-b-2 border-transparent text-sm font-medium transition-colors">
+                            已通过
+                        </button>
+                        <button onclick="switchTab('rejected')" id="tab-rejected" class="px-4 py-2.5 text-neutral-400 hover:text-[#165DFF] border-b-2 border-transparent text-sm font-medium transition-colors">
+                            已拒绝
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- 批量操作 -->
+            <div id="batch-actions" class="bg-white rounded-2xl p-3 shadow-sm border border-neutral-100 mb-3 hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="text-sm text-neutral-500">已选择 <span id="selected-count" class="font-bold text-[#165DFF]">0</span> 项</span>
+                        <button onclick="batchApprove()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm transition-colors shadow-sm">
+                            <i class="fa fa-check mr-1.5"></i>批量通过
+                        </button>
+                        <button onclick="batchReject()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm transition-colors shadow-sm">
+                            <i class="fa fa-times mr-1.5"></i>批量拒绝
+                        </button>
+                    </div>
+                    <button onclick="clearSelection()" class="text-neutral-400 hover:text-neutral-600 px-3 py-2 rounded-xl text-sm hover:bg-neutral-100 transition-colors">
+                        <i class="fa fa-close mr-1"></i>取消
                     </button>
-                    <button onclick="switchTab('approved')" id="tab-approved" class="px-6 py-3 text-neutral-500 hover:text-[#165DFF] transition-colors">
-                        已通过
-                    </button>
-                    <button onclick="switchTab('rejected')" id="tab-rejected" class="px-6 py-3 text-neutral-500 hover:text-[#165DFF] transition-colors">
-                        已拒绝
-                    </button>
-                </nav>
+                </div>
+            </div>
+
+            <!-- 评价列表 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden">
+                <div id="reviews-list" class="divide-y divide-neutral-100"></div>
+                
+                <div id="loading" class="text-center py-12 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
+                    <p class="text-neutral-400 mt-3 text-sm">加载中...</p>
+                </div>
+
+                <div id="no-data" class="text-center py-12 hidden">
+                    <div class="w-14 h-14 bg-neutral-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fa fa-inbox text-2xl text-neutral-300"></i>
+                    </div>
+                    <p class="text-neutral-400 text-sm">暂无数据</p>
+                </div>
+
+                <div id="pagination" class="px-4 py-3 flex items-center justify-between border-t border-neutral-100 hidden">
+                    <div class="text-sm text-neutral-400">
+                        第 <span id="current-page" class="font-medium text-neutral-600">1</span> / <span id="total-pages">1</span> 页
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="changePage('prev')" id="prev-page" class="px-4 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">
+                            上一页
+                        </button>
+                        <button onclick="changePage('next')" id="next-page" class="px-4 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">
+                            下一页
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 批量操作栏 -->
-        <div id="batch-actions" class="bg-white rounded-lg p-4 shadow mb-4 hidden">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center space-x-4 gap-3">
-                    <span class="text-sm text-neutral-600">已选择 <span id="selected-count">0</span> 项</span>
-                    <button onclick="batchApprove()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        <i class="fa fa-check mr-2"></i>批量通过
-                    </button>
-                    <button onclick="batchReject()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        <i class="fa fa-times mr-2"></i>批量拒绝
-                    </button>
+        <!-- 订单管理 -->
+        <div id="order-section" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden">
+                <div class="p-4 border-b border-neutral-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-bold text-neutral-800">订单管理</h2>
+                        <p class="text-neutral-400 text-xs mt-0.5">查看所有订单并修改状态</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="order-filter-status" onchange="orderPage=1;loadOrders()" class="border border-neutral-200 rounded-xl px-3 py-1.5 bg-white text-neutral-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <option value="">全部状态</option>
+                            <option value="pending">待处理</option>
+                            <option value="confirmed">已确认</option>
+                            <option value="completed">已完成</option>
+                            <option value="canceled">已取消</option>
+                        </select>
+                        <button onclick="loadOrders()" class="bg-[#165DFF] hover:bg-[#1248CC] text-white px-3 py-1.5 rounded-xl text-sm shadow-sm transition-colors">
+                            <i class="fa fa-refresh mr-1"></i> 刷新
+                        </button>
+                    </div>
                 </div>
-                <button onclick="clearSelection()" class="ml-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 px-4 py-2 rounded-lg text-sm transition-colors">
-                    <i class="fa fa-close mr-2"></i>取消选择
-                </button>
+                <div id="order-list" class="divide-y divide-neutral-100"></div>
+                <div id="order-loading" class="text-center py-12 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
+                    <p class="text-neutral-400 mt-3 text-sm">加载订单中...</p>
+                </div>
+                <div id="order-no-data" class="text-center py-12 hidden">
+                    <div class="w-14 h-14 bg-neutral-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fa fa-inbox text-2xl text-neutral-300"></i>
+                    </div>
+                    <p class="text-neutral-400 text-sm">暂无订单数据</p>
+                </div>
+                <div id="order-pagination" class="px-4 py-3 flex items-center justify-between border-t border-neutral-100 hidden">
+                    <div class="text-sm text-neutral-400">
+                        第 <span id="order-current-page" class="font-medium text-neutral-600">1</span> / <span id="order-total-pages">1</span> 页
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="changeOrderPage('prev')" id="order-prev-page" class="px-4 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">上一页</button>
+                        <button onclick="changeOrderPage('next')" id="order-next-page" class="px-4 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">下一页</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 评价列表 -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div id="reviews-list" class="divide-y divide-neutral-200">
-                <!-- 列表将通过JS动态加载 -->
-            </div>
-            
-            <!-- 加载中 -->
-            <div id="loading" class="text-center py-12 hidden">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
-                <p class="text-neutral-500 mt-2">加载中...</p>
-            </div>
-            
-            <!-- 无数据提示 -->
-            <div id="no-data" class="text-center py-12 hidden">
-                <i class="fa fa-inbox text-4xl text-neutral-300 mb-4"></i>
-                <p class="text-neutral-500">暂无数据</p>
-            </div>
-            
-            <!-- 分页 -->
-            <div id="pagination" class="bg-white px-6 py-4 flex items-center justify-between border-t border-neutral-200 hidden">
-                <div class="text-sm text-neutral-500">
-                    第 <span id="current-page">1</span> / <span id="total-pages">1</span> 页
+        <!-- 留言管理 -->
+        <div id="message-section" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden">
+                <div class="p-4 border-b border-neutral-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-bold text-neutral-800">留言管理</h2>
+                        <p class="text-neutral-400 text-xs mt-0.5">查看用户通过联系页面提交的留言</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="msg-filter-status" onchange="msgPage=1;loadMessages()" class="border border-neutral-200 rounded-xl px-3 py-1.5 bg-white text-neutral-600 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            <option value="">全部状态</option>
+                            <option value="unread">未读</option>
+                            <option value="read">已读</option>
+                            <option value="replied">已回复</option>
+                        </select>
+                        <button onclick="loadMessages()" class="bg-[#165DFF] hover:bg-[#1248CC] text-white px-3 py-1.5 rounded-xl text-sm shadow-sm transition-colors">
+                            <i class="fa fa-refresh mr-1"></i> 刷新
+                        </button>
+                    </div>
                 </div>
-                <div class="flex space-x-2">
-                    <button onclick="changePage('prev')" id="prev-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        上一页
-                    </button>
-                    <button onclick="changePage('next')" id="next-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        下一页
-                    </button>
+                <div id="msg-list" class="divide-y divide-neutral-100"></div>
+                <div id="msg-loading" class="text-center py-12 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
+                    <p class="text-neutral-400 mt-3 text-sm">加载留言中...</p>
                 </div>
-            </div>
-        </div>
-        </div>
-
-        <!-- 订单管理区 -->
-        <div id="order-section" class="hidden bg-white rounded-lg shadow overflow-hidden mt-8">
-            <div class="p-6 border-b border-neutral-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-neutral-700">订单管理</h2>
-                    <p class="text-neutral-500">查看所有订单并修改订单状态。</p>
+                <div id="msg-no-data" class="text-center py-12 hidden">
+                    <div class="w-14 h-14 bg-neutral-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fa fa-inbox text-2xl text-neutral-300"></i>
+                    </div>
+                    <p class="text-neutral-400 text-sm">暂无留言</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <select id="order-filter-status" onchange="loadOrders()" class="border border-neutral-300 rounded-lg px-4 py-2 bg-white text-neutral-700">
-                        <option value="">全部状态</option>
-                        <option value="pending">待处理</option>
-                        <option value="confirmed">已确认</option>
-                        <option value="completed">已完成</option>
-                        <option value="canceled">已取消</option>
-                    </select>
-                    <button onclick="loadOrders()" class="bg-[#165DFF] text-white px-4 py-2 rounded-lg">刷新列表</button>
-                </div>
-            </div>
-            <div id="order-list" class="divide-y divide-neutral-200"></div>
-            <div id="order-loading" class="text-center py-12 hidden">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#165DFF]"></div>
-                <p class="text-neutral-500 mt-2">加载订单中...</p>
-            </div>
-            <div id="order-no-data" class="text-center py-12 hidden">
-                <i class="fa fa-inbox text-4xl text-neutral-300 mb-4"></i>
-                <p class="text-neutral-500">暂无订单数据</p>
-            </div>
-            <div id="order-pagination" class="bg-white px-6 py-4 flex items-center justify-between border-t border-neutral-200 hidden">
-                <div class="text-sm text-neutral-500">
-                    第 <span id="order-current-page">1</span> / <span id="order-total-pages">1</span> 页
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="changeOrderPage('prev')" id="order-prev-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        上一页
-                    </button>
-                    <button onclick="changeOrderPage('next')" id="order-next-page" class="px-3 py-1 border border-neutral-300 rounded hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                        下一页
-                    </button>
+                <div id="msg-pagination" class="px-4 py-3 flex items-center justify-between border-t border-neutral-100 hidden">
+                    <div class="text-sm text-neutral-400">
+                        第 <span id="msg-current-page" class="font-medium text-neutral-600">1</span> / <span id="msg-total-pages">1</span> 页
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="changeMsgPage('prev')" id="msg-prev-page" class="px-3 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">上一页</button>
+                        <button onclick="changeMsgPage('next')" id="msg-next-page" class="px-3 py-1.5 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm transition-colors">下一页</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <style>
-        /* 只有复选框需要自定义样式，因为 Tailwind 没有内置 checkbox 样式 */
-        .checkbox-custom {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #d1d5db;
-            border-radius: 0.25rem;
-            background-color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .checkbox-custom:checked {
-            background-color: #165DFF;
-            border-color: #165DFF;
-            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-            background-size: 100% 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        
-        .checkbox-custom:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.5);
-        }
-    </style>
+    <footer class="border-t border-neutral-200 bg-white py-4 mt-auto">
+        <div class="px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2 text-neutral-400 text-xs">
+                <i class="fa fa-map-signs text-[#165DFF]"></i>
+                <span>利川旅游管理后台</span>
+            </div>
+            <span class="text-neutral-300 text-xs">© 2026 利川旅游指南 · 内部系统</span>
+        </div>
+    </footer>
 
     <script>
-        // 当前状态
         let currentTab = 'pending';
         let currentPage = 1;
         let totalPages = 1;
@@ -251,35 +317,32 @@
         let orderPage = 1;
         let orderTotalPages = 1;
         let allOrders = [];
+        let msgPage = 1;
+        let msgTotalPages = 1;
 
-        // 页面加载时检查登录状态
         document.addEventListener('DOMContentLoaded', function() {
             const auth = sessionStorage.getItem('adminAuth');
-            if (!auth) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
+            if (!auth) { window.location.href = 'index.html'; return; }
             loadStats();
             loadReviews();
             loadOrders();
+            loadMessages();
             switchSection('reviews');
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+            }, { passive: true });
         });
 
-        // 获取认证头
         function getAuthHeader() {
             const auth = sessionStorage.getItem('adminAuth');
             return { 'Authorization': 'Basic ' + auth };
         }
 
-        // 加载统计数据
         async function loadStats() {
             try {
-                const response = await fetch('/api/admin/stats', {
-                    headers: getAuthHeader()
-                });
+                const response = await fetch('/api/admin/stats', { headers: getAuthHeader() });
                 const result = await response.json();
-                
                 if (result.success) {
                     document.getElementById('total-count').textContent = result.data.total_reviews || 0;
                     document.getElementById('pending-count').textContent = result.data.pending_reviews || 0;
@@ -287,65 +350,43 @@
                     document.getElementById('pending-badge').textContent = result.data.pending_reviews || 0;
                     document.getElementById('total-orders').textContent = result.data.total_orders || 0;
                     document.getElementById('confirmed-orders').textContent = result.data.confirmed_orders || 0;
+                    const unread = result.data.unread_messages || 0;
+                    document.getElementById('unread-messages').textContent = unread;
+                    const badge = document.getElementById('unread-badge');
+                    if (unread > 0) { badge.textContent = unread; badge.classList.remove('hidden'); }
+                    else { badge.classList.add('hidden'); }
                 }
-            } catch (error) {
-                console.error('加载统计失败:', error);
-            }
+            } catch (error) { console.error('加载统计失败:', error); }
         }
 
-        // 切换标签页
         function switchTab(tab) {
-            currentTab = tab;
-            currentPage = 1;
-            selectedIds.clear();
+            currentTab = tab; currentPage = 1; selectedIds.clear();
             updateBatchActions();
-            
-            // 更新标签样式
             document.querySelectorAll('[id^="tab-"]').forEach(el => {
                 el.classList.remove('border-[#165DFF]', 'text-[#165DFF]');
-                el.classList.add('text-neutral-500');
+                el.classList.add('border-transparent', 'text-neutral-400');
             });
-            document.getElementById(`tab-${tab}`).classList.add('border-[#165DFF]', 'text-[#165DFF]');
-            
+            const active = document.getElementById(`tab-${tab}`);
+            active.classList.add('border-[#165DFF]', 'text-[#165DFF]');
+            active.classList.remove('border-transparent', 'text-neutral-400');
             loadReviews();
         }
 
-        // 加载评价列表
         async function loadReviews() {
             const listEl = document.getElementById('reviews-list');
             const loadingEl = document.getElementById('loading');
             const noDataEl = document.getElementById('no-data');
             const paginationEl = document.getElementById('pagination');
-            
-            loadingEl.classList.remove('hidden');
-            listEl.innerHTML = '';
-            
+            loadingEl.classList.remove('hidden'); listEl.innerHTML = ''; noDataEl.classList.add('hidden'); paginationEl.classList.add('hidden');
             try {
-                let url = '';
-                if (currentTab === 'pending') {
-                    url = '/api/admin/reviews/pending';
-                } else {
-                    url = `/api/admin/reviews/processed?status=${currentTab}&page=${currentPage}`;
-                }
-                
-                const response = await fetch(url, {
-                    headers: getAuthHeader()
-                });
+                let url = currentTab === 'pending' ? '/api/admin/reviews/pending' : `/api/admin/reviews/processed?status=${currentTab}&page=${currentPage}`;
+                const response = await fetch(url, { headers: getAuthHeader() });
                 const result = await response.json();
-                
                 loadingEl.classList.add('hidden');
-                
                 if (result.success) {
-                    const reviews = currentTab === 'pending' ? result.data : result.data;
-                    
-                    if (reviews.length === 0) {
-                        noDataEl.classList.remove('hidden');
-                        paginationEl.classList.add('hidden');
-                        return;
-                    }
-                    
+                    const reviews = result.data;
+                    if (reviews.length === 0) { noDataEl.classList.remove('hidden'); paginationEl.classList.add('hidden'); return; }
                     noDataEl.classList.add('hidden');
-                    
                     if (currentTab !== 'pending') {
                         totalPages = result.pagination.totalPages;
                         document.getElementById('current-page').textContent = currentPage;
@@ -353,175 +394,93 @@
                         paginationEl.classList.remove('hidden');
                         document.getElementById('prev-page').disabled = currentPage <= 1;
                         document.getElementById('next-page').disabled = currentPage >= totalPages;
-                    } else {
-                        paginationEl.classList.add('hidden');
-                    }
-                    
+                    } else { paginationEl.classList.add('hidden'); }
                     displayReviews(reviews);
                 }
-            } catch (error) {
-                console.error('加载评价失败:', error);
-                loadingEl.classList.add('hidden');
-                alert('加载失败，请刷新重试');
-            }
+            } catch (error) { console.error('加载评价失败:', error); loadingEl.classList.add('hidden'); }
         }
 
-        // 显示评价列表
         function displayReviews(reviews) {
             const listEl = document.getElementById('reviews-list');
             allReviews = reviews;
-            
             let html = '';
             reviews.forEach(review => {
                 const stars = generateStars(review.rating);
                 const isSelected = selectedIds.has(review.id);
-                
                 html += `
-                    <div class="p-6 hover:bg-neutral-50 transition-colors ${isSelected ? 'bg-[#165DFF]/5' : ''}">
-                        <div class="flex items-start space-x-4">
-                            <div class="pt-1">
-                                <input type="checkbox" 
-                                       onchange="toggleSelect(${review.id})"
-                                       ${isSelected ? 'checked' : ''}
-                                       class="checkbox-custom">
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-start justify-between mb-2">
+                    <div class="p-4 row-hover ${isSelected ? 'bg-blue-50/50' : ''}">
+                        <div class="flex items-start gap-3">
+                            <div class="pt-1"><input type="checkbox" onchange="toggleSelect(${review.id})" ${isSelected ? 'checked' : ''} class="checkbox-custom"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-1.5">
                                     <div>
-                                        <div class="flex items-center space-x-3">
-                                            <h3 class="font-bold text-neutral-600">${review.name}</h3>
-                                            <span class="text-sm text-neutral-400">${review.email}</span>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="font-bold text-neutral-700">${review.name}</h3>
+                                            <span class="text-xs text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded">${review.email}</span>
                                         </div>
-                                        <div class="flex items-center space-x-3 mt-1">
-                                            <div class="flex items-center space-x-1">
-                                                ${stars}
-                                            </div>
-                                            <span class="text-sm text-neutral-400">${review.created_at}</span>
+                                        <div class="flex items-center gap-3 mt-1.5">
+                                            <div class="flex gap-0.5">${stars}</div>
+                                            <span class="text-xs text-neutral-400">${review.created_at}</span>
                                         </div>
-                                        ${review.visited_place ? `
-                                            <p class="text-sm text-[#165DFF] mt-2">📍 访问地点：${review.visited_place}</p>
-                                        ` : ''}
+                                        ${review.visited_place ? `<p class="text-xs text-[#165DFF] mt-2 bg-blue-50 inline-block px-2 py-0.5 rounded"><i class="fa fa-map-marker mr-1"></i>${review.visited_place}</p>` : ''}
                                     </div>
-                                    <div class="flex items-center space-x-2">
+                                    <div class="flex items-center gap-2 flex-shrink-0">
                                         ${currentTab === 'pending' ? `
-                                            <button onclick="approveReview(${review.id})" 
-                                                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-colors">
-                                                <i class="fa fa-check mr-1"></i>通过
-                                            </button>
-                                            <button onclick="rejectReview(${review.id})" 
-                                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition-colors">
-                                                <i class="fa fa-times mr-1"></i>拒绝
-                                            </button>
+                                            <button onclick="approveReview(${review.id})" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs transition-colors shadow-sm"><i class="fa fa-check mr-1"></i>通过</button>
+                                            <button onclick="rejectReview(${review.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs transition-colors shadow-sm"><i class="fa fa-times mr-1"></i>拒绝</button>
                                         ` : ''}
-                                        <button onclick="deleteReview(${review.id})" 
-                                                class="text-red-500 hover:text-red-600 p-1">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                        <button onclick="deleteReview(${review.id})" class="text-neutral-300 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-colors"><i class="fa fa-trash text-sm"></i></button>
                                     </div>
                                 </div>
-                                <div class="bg-neutral-50 rounded-lg p-4 mt-3">
-                                    <p class="text-neutral-600">${review.review_text}</p>
-                                </div>
-                                ${review.status ? `
-                                    <p class="text-xs text-neutral-400 mt-2">
-                                        审核时间：${review.updated_at || review.created_at}
-                                    </p>
-                                ` : ''}
+                <div class="bg-neutral-50 rounded-xl p-3 mt-1.5"><p class="text-sm text-neutral-600 leading-relaxed">${review.review_text}</p></div>
+                                ${review.status ? `<p class="text-xs text-neutral-300 mt-2"><i class="fa fa-clock-o mr-1"></i>审核时间：${review.updated_at || review.created_at}</p>` : ''}
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
-            
             listEl.innerHTML = html;
         }
 
-        // 生成星星
         function generateStars(rating) {
             let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                stars += i <= rating 
-                    ? '<i class="fa fa-star text-yellow-400"></i>'
-                    : '<i class="fa fa-star-o text-neutral-300"></i>';
-            }
+            for (let i = 1; i <= 5; i++) stars += i <= rating ? '<i class="fa fa-star text-amber-400 text-xs"></i>' : '<i class="fa fa-star-o text-neutral-200 text-xs"></i>';
             return stars;
         }
 
-        // 选择/取消选择
-        function toggleSelect(id) {
-            if (selectedIds.has(id)) {
-                selectedIds.delete(id);
-            } else {
-                selectedIds.add(id);
-            }
-            updateBatchActions();
-            displayReviews(allReviews);
-        }
-
-        // 更新批量操作栏
+        function toggleSelect(id) { selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id); updateBatchActions(); displayReviews(allReviews); }
         function updateBatchActions() {
-            const batchActions = document.getElementById('batch-actions');
-            const selectedCount = document.getElementById('selected-count');
-            
-            if (selectedIds.size > 0) {
-                selectedCount.textContent = selectedIds.size;
-                batchActions.classList.remove('hidden');
-            } else {
-                batchActions.classList.add('hidden');
-            }
+            const el = document.getElementById('batch-actions');
+            document.getElementById('selected-count').textContent = selectedIds.size;
+            selectedIds.size > 0 ? el.classList.remove('hidden') : el.classList.add('hidden');
         }
+        function clearSelection() { selectedIds.clear(); updateBatchActions(); displayReviews(allReviews); }
 
-        // 清除选择
-        function clearSelection() {
-            selectedIds.clear();
-            updateBatchActions();
-            displayReviews(allReviews);
-        }
-
-        // 切换管理区
         function switchSection(section) {
             activeSection = section;
-            document.getElementById('section-reviews').classList.toggle('bg-[#165DFF]', section === 'reviews');
-            document.getElementById('section-reviews').classList.toggle('text-white', section === 'reviews');
-            document.getElementById('section-reviews').classList.toggle('bg-white', section !== 'reviews');
-            document.getElementById('section-reviews').classList.toggle('text-neutral-600', section !== 'reviews');
-            document.getElementById('section-orders').classList.toggle('bg-[#165DFF]', section === 'orders');
-            document.getElementById('section-orders').classList.toggle('text-white', section === 'orders');
-            document.getElementById('section-orders').classList.toggle('bg-white', section !== 'orders');
-            document.getElementById('section-orders').classList.toggle('text-neutral-600', section !== 'orders');
-
-            document.getElementById('batch-actions').style.display = section === 'reviews' ? 'flex' : 'none';
-            document.getElementById('pagination').style.display = section === 'reviews' ? 'flex' : 'none';
-            document.getElementById('order-section').classList.toggle('hidden', section !== 'orders');
+            ['reviews','orders','messages'].forEach(s => {
+                const btn = document.getElementById(`section-${s}`);
+                if (s === section) { btn.className = 'btn-active px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all'; }
+                else { btn.className = 'btn-inactive px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all'; }
+            });
             document.getElementById('review-section').classList.toggle('hidden', section !== 'reviews');
-
-            if (section === 'reviews') {
-                loadReviews();
-            } else {
-                loadOrders();
-            }
+            document.getElementById('order-section').classList.toggle('hidden', section !== 'orders');
+            document.getElementById('message-section').classList.toggle('hidden', section !== 'messages');
+            if (section === 'reviews') loadReviews();
+            else if (section === 'orders') loadOrders();
+            else if (section === 'messages') loadMessages();
         }
 
-        // 加载订单列表
         async function loadOrders() {
             const listEl = document.getElementById('order-list');
             const loadingEl = document.getElementById('order-loading');
             const noDataEl = document.getElementById('order-no-data');
             const paginationEl = document.getElementById('order-pagination');
             const status = document.getElementById('order-filter-status').value;
-
-            loadingEl.classList.remove('hidden');
-            listEl.innerHTML = '';
-            noDataEl.classList.add('hidden');
-            paginationEl.classList.add('hidden');
-
+            loadingEl.classList.remove('hidden'); listEl.innerHTML = ''; noDataEl.classList.add('hidden'); paginationEl.classList.add('hidden');
             try {
-                const response = await fetch(`/api/admin/orders?page=${orderPage}&limit=20${status ? `&status=${status}` : ''}`, {
-                    headers: getAuthHeader()
-                });
+                const response = await fetch(`/api/admin/orders?page=${orderPage}&limit=20${status ? `&status=${status}` : ''}`, { headers: getAuthHeader() });
                 const result = await response.json();
                 loadingEl.classList.add('hidden');
-
                 if (result.success) {
                     const orders = result.data;
                     orderTotalPages = result.pagination ? result.pagination.totalPages : 1;
@@ -529,200 +488,147 @@
                     document.getElementById('order-total-pages').textContent = orderTotalPages;
                     document.getElementById('order-prev-page').disabled = orderPage <= 1;
                     document.getElementById('order-next-page').disabled = orderPage >= orderTotalPages;
-
-                    if (orders.length === 0) {
-                        noDataEl.classList.remove('hidden');
-                        return;
-                    }
-
+                    if (orders.length === 0) { noDataEl.classList.remove('hidden'); return; }
+                    const statusColors = { pending: 'bg-amber-50', confirmed: 'bg-emerald-50', completed: 'bg-blue-50', canceled: 'bg-red-50' };
+                    const statusLabels = { pending: '待处理', confirmed: '已确认', completed: '已完成', canceled: '已取消' };
+                    const statusTextColors = { pending: 'text-amber-600', confirmed: 'text-emerald-600', completed: 'text-blue-600', canceled: 'text-red-600' };
                     listEl.innerHTML = orders.map(order => `
-                        <div class="p-6 ${order.status === 'pending' ? 'bg-yellow-50' : order.status === 'confirmed' ? 'bg-green-50' : order.status === 'canceled' ? 'bg-red-50' : 'bg-white'}">
+                        <div class="p-5 row-hover ${statusColors[order.status] || ''}">
                             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                                 <div class="flex-1">
-                                    <p class="text-sm text-neutral-400 mb-1">订单 #${order.id} · ${order.status === 'pending' ? '待处理' : order.status === 'confirmed' ? '已确认' : order.status === 'completed' ? '已完成' : '已取消'}</p>
-                                    <h3 class="text-lg font-semibold text-neutral-700">${order.customer_name}</h3>
-                                    <p class="text-neutral-500">${order.contact} · ${order.package_name}</p>
-                                    <p class="text-sm text-neutral-500 mt-2">出游日期：${order.travel_date} · 人数：${order.guests} · 价格：¥${order.total_price}</p>
-                                    ${order.notes ? `<p class="text-sm text-neutral-500 mt-2">备注：${order.notes}</p>` : ''}
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-xs text-neutral-400">订单 #${order.id}</span>
+                                        <span class="text-xs px-2 py-0.5 rounded-full font-medium ${statusColors[order.status]} ${statusTextColors[order.status]}">${statusLabels[order.status] || order.status}</span>
+                                    </div>
+                                    <h3 class="text-base font-bold text-neutral-700">${order.customer_name}</h3>
+                                    <p class="text-sm text-neutral-500 mt-1">${order.contact} · ${order.package_name}</p>
+                                    <p class="text-xs text-neutral-400 mt-2"><i class="fa fa-calendar mr-1"></i>${order.travel_date} · <i class="fa fa-users mr-1 ml-2"></i>${order.guests}人 · <i class="fa fa-money mr-1 ml-2"></i>¥${order.total_price}</p>
+                                    ${order.notes ? `<p class="text-xs text-neutral-400 mt-1"><i class="fa fa-comment mr-1"></i>${order.notes}</p>` : ''}
                                 </div>
-                                <div class="flex flex-wrap gap-2 items-center">
-                                    ${order.status !== 'confirmed' && order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'confirmed')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">确认</button>` : ''}
-                                    ${order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-[#165DFF] hover:bg-[#1348C4] text-white px-4 py-2 rounded-lg text-sm">完成</button>` : ''}
-                                    ${order.status !== 'canceled' ? `<button onclick="updateOrderStatus(${order.id}, 'canceled')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">取消</button>` : ''}
+                                <div class="flex gap-2 flex-shrink-0">
+                                    ${order.status !== 'confirmed' && order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'confirmed')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">确认</button>` : ''}
+                                    ${order.status !== 'completed' ? `<button onclick="updateOrderStatus(${order.id}, 'completed')" class="bg-[#165DFF] hover:bg-[#1248CC] text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">完成</button>` : ''}
+                                    ${order.status !== 'canceled' ? `<button onclick="updateOrderStatus(${order.id}, 'canceled')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">取消</button>` : ''}
                                 </div>
                             </div>
-                        </div>
-                    `).join('');
-
+                        </div>`).join('');
                     paginationEl.classList.remove('hidden');
-                } else {
-                    noDataEl.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('加载订单失败:', error);
-                loadingEl.classList.add('hidden');
-                noDataEl.classList.remove('hidden');
-            }
+                } else { noDataEl.classList.remove('hidden'); }
+            } catch (error) { console.error('加载订单失败:', error); loadingEl.classList.add('hidden'); noDataEl.classList.remove('hidden'); }
         }
 
-        function changeOrderPage(direction) {
-            if (direction === 'prev' && orderPage > 1) {
-                orderPage--;
-                loadOrders();
-            } else if (direction === 'next' && orderPage < orderTotalPages) {
-                orderPage++;
-                loadOrders();
-            }
-        }
+        function changeOrderPage(dir) { if (dir === 'prev' && orderPage > 1) { orderPage--; loadOrders(); } else if (dir === 'next' && orderPage < orderTotalPages) { orderPage++; loadOrders(); } }
 
         async function updateOrderStatus(id, status) {
-            if (!confirm(`确定要将订单 #${id} 更新为 ${status === 'confirmed' ? '已确认' : status === 'completed' ? '已完成' : '已取消'} 吗？`)) return;
+            const labels = { confirmed: '已确认', completed: '已完成', canceled: '已取消' };
+            if (!confirm(`确定要将订单 #${id} 更新为「${labels[status]}」吗？`)) return;
             try {
-                const response = await fetch(`/api/admin/orders/${id}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({ status })
-                });
+                const response = await fetch(`/api/admin/orders/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ status }) });
                 const result = await response.json();
-                if (result.success) {
-                    alert(result.message);
-                    loadStats();
-                    loadOrders();
-                } else {
-                    alert(result.message || '更新失败');
-                }
-            } catch (error) {
-                alert('网络错误，请重试');
-            }
+                if (result.success) { loadStats(); loadOrders(); } else { alert(result.message || '更新失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
         }
 
-        // 批量通过
-        async function batchApprove() {
-            if (selectedIds.size === 0) return;
-            await batchUpdateStatus('approved');
-        }
+        async function batchApprove() { if (selectedIds.size === 0) return; await batchUpdateStatus('approved'); }
+        async function batchReject() { if (selectedIds.size === 0) return; await batchUpdateStatus('rejected'); }
 
-        // 批量拒绝
-        async function batchReject() {
-            if (selectedIds.size === 0) return;
-            await batchUpdateStatus('rejected');
-        }
-
-        // 批量更新状态
         async function batchUpdateStatus(status) {
-            if (!confirm(`确定要${status === 'approved' ? '通过' : '拒绝'}选中的 ${selectedIds.size} 条评价吗？`)) {
-                return;
-            }
-            
+            if (!confirm(`确定要${status === 'approved' ? '通过' : '拒绝'}选中的 ${selectedIds.size} 条评价吗？`)) return;
             try {
-                const response = await fetch('/api/admin/reviews/batch-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({
-                        ids: Array.from(selectedIds),
-                        status: status
-                    })
-                });
-                
+                const response = await fetch('/api/admin/reviews/batch-status', { method: 'POST', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ ids: Array.from(selectedIds), status }) });
                 const result = await response.json();
-                
-                if (result.success) {
-                    alert(result.message);
-                    selectedIds.clear();
-                    loadStats();
-                    loadReviews();
-                } else {
-                    alert(result.message || '操作失败');
-                }
-            } catch (error) {
-                alert('网络错误，请重试');
-            }
+                if (result.success) { selectedIds.clear(); loadStats(); loadReviews(); } else { alert(result.message || '操作失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
         }
 
-        // 通过单个评价
-        async function approveReview(id) {
-            if (!confirm('确定要通过这条评价吗？')) return;
-            await updateStatus(id, 'approved');
-        }
+        async function approveReview(id) { if (!confirm('确定要通过这条评价吗？')) return; await updateStatus(id, 'approved'); }
+        async function rejectReview(id) { if (!confirm('确定要拒绝这条评价吗？')) return; await updateStatus(id, 'rejected'); }
 
-        // 拒绝单个评价
-        async function rejectReview(id) {
-            if (!confirm('确定要拒绝这条评价吗？')) return;
-            await updateStatus(id, 'rejected');
-        }
-
-        // 更新评价状态
         async function updateStatus(id, status) {
             try {
-                const response = await fetch(`/api/admin/reviews/${id}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...getAuthHeader()
-                    },
-                    body: JSON.stringify({ status })
-                });
-                
+                const response = await fetch(`/api/admin/reviews/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ status }) });
                 const result = await response.json();
-                
-                if (result.success) {
-                    alert(result.message);
-                    loadStats();
-                    loadReviews();
-                } else {
-                    alert(result.message || '操作失败');
-                }
-            } catch (error) {
-                alert('网络错误，请重试');
-            }
+                if (result.success) { loadStats(); loadReviews(); } else { alert(result.message || '操作失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
         }
 
-        // 删除评价
         async function deleteReview(id) {
             if (!confirm('确定要删除这条评价吗？此操作不可恢复。')) return;
-            
             try {
-                const response = await fetch(`/api/admin/reviews/${id}`, {
-                    method: 'DELETE',
-                    headers: getAuthHeader()
-                });
-                
+                const response = await fetch(`/api/admin/reviews/${id}`, { method: 'DELETE', headers: getAuthHeader() });
                 const result = await response.json();
-                
+                if (result.success) { loadStats(); loadReviews(); } else { alert(result.message || '删除失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
+        }
+
+        function changePage(dir) { if (dir === 'prev' && currentPage > 1) { currentPage--; loadReviews(); } else if (dir === 'next' && currentPage < totalPages) { currentPage++; loadReviews(); } }
+
+        async function loadMessages() {
+            const listEl = document.getElementById('msg-list');
+            const loadingEl = document.getElementById('msg-loading');
+            const noDataEl = document.getElementById('msg-no-data');
+            const paginationEl = document.getElementById('msg-pagination');
+            const status = document.getElementById('msg-filter-status').value;
+            loadingEl.classList.remove('hidden'); listEl.innerHTML = ''; noDataEl.classList.add('hidden'); paginationEl.classList.add('hidden');
+            try {
+                const response = await fetch(`/api/admin/messages?page=${msgPage}&limit=20${status ? `&status=${status}` : ''}`, { headers: getAuthHeader() });
+                const result = await response.json();
+                loadingEl.classList.add('hidden');
                 if (result.success) {
-                    alert('删除成功');
-                    loadStats();
-                    loadReviews();
-                } else {
-                    alert(result.message || '删除失败');
-                }
-            } catch (error) {
-                alert('网络错误，请重试');
-            }
+                    const msgs = result.data;
+                    msgTotalPages = result.pagination ? result.pagination.totalPages : 1;
+                    document.getElementById('msg-current-page').textContent = msgPage;
+                    document.getElementById('msg-total-pages').textContent = msgTotalPages;
+                    document.getElementById('msg-prev-page').disabled = msgPage <= 1;
+                    document.getElementById('msg-next-page').disabled = msgPage >= msgTotalPages;
+                    if (msgs.length === 0) { noDataEl.classList.remove('hidden'); return; }
+                    const statusColors = { unread: 'bg-red-50 text-red-600', read: 'bg-neutral-100 text-neutral-500', replied: 'bg-emerald-50 text-emerald-600' };
+                    const statusLabels = { unread: '未读', read: '已读', replied: '已回复' };
+                    listEl.innerHTML = msgs.map(msg => `
+                        <div class="p-4 row-hover ${msg.status === 'unread' ? 'bg-blue-50/30' : ''}">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                                        <h3 class="font-bold text-neutral-700 text-sm">${msg.name}</h3>
+                                        <span class="text-xs text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded">${msg.contact}</span>
+                                        <span class="text-xs px-2 py-0.5 rounded-full font-medium ${statusColors[msg.status] || ''}">${statusLabels[msg.status] || msg.status}</span>
+                                    </div>
+                                    <p class="text-xs text-[#165DFF] mb-1.5"><i class="fa fa-tag mr-1"></i>${msg.subject}</p>
+                                    <div class="bg-neutral-50 rounded-xl p-3"><p class="text-sm text-neutral-600 leading-relaxed">${msg.content}</p></div>
+                                    <p class="text-xs text-neutral-300 mt-1.5"><i class="fa fa-clock-o mr-1"></i>${msg.created_at}</p>
+                                </div>
+                                <div class="flex gap-2 flex-shrink-0">
+                                    ${msg.status === 'unread' ? `<button onclick="updateMsgStatus(${msg.id}, 'read')" class="bg-neutral-500 hover:bg-neutral-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">标为已读</button>` : ''}
+                                    ${msg.status !== 'replied' ? `<button onclick="updateMsgStatus(${msg.id}, 'replied')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs shadow-sm transition-colors">标为已回复</button>` : ''}
+                                    <button onclick="deleteMessage(${msg.id})" class="text-neutral-300 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition-colors"><i class="fa fa-trash text-sm"></i></button>
+                                </div>
+                            </div>
+                        </div>`).join('');
+                    paginationEl.classList.remove('hidden');
+                } else { noDataEl.classList.remove('hidden'); }
+            } catch (error) { console.error('加载留言失败:', error); loadingEl.classList.add('hidden'); noDataEl.classList.remove('hidden'); }
         }
 
-        // 切换页码
-        function changePage(direction) {
-            if (direction === 'prev' && currentPage > 1) {
-                currentPage--;
-                loadReviews();
-            } else if (direction === 'next' && currentPage < totalPages) {
-                currentPage++;
-                loadReviews();
-            }
+        function changeMsgPage(dir) { if (dir === 'prev' && msgPage > 1) { msgPage--; loadMessages(); } else if (dir === 'next' && msgPage < msgTotalPages) { msgPage++; loadMessages(); } }
+
+        async function updateMsgStatus(id, status) {
+            try {
+                const response = await fetch(`/api/admin/messages/${id}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...getAuthHeader() }, body: JSON.stringify({ status }) });
+                const result = await response.json();
+                if (result.success) { loadStats(); loadMessages(); } else { alert(result.message || '更新失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
         }
 
-        // 退出登录
-        function logout() {
-            sessionStorage.removeItem('adminAuth');
-            window.location.href = 'index.html';
+        async function deleteMessage(id) {
+            if (!confirm('确定要删除这条留言吗？此操作不可恢复。')) return;
+            try {
+                const response = await fetch(`/api/admin/messages/${id}`, { method: 'DELETE', headers: getAuthHeader() });
+                const result = await response.json();
+                if (result.success) { loadStats(); loadMessages(); } else { alert(result.message || '删除失败'); }
+            } catch (error) { alert('网络错误，请重试'); }
         }
+
+        function logout() { sessionStorage.removeItem('adminAuth'); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>

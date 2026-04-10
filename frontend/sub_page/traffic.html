@@ -1,73 +1,176 @@
-<!-- 交通方式页面 -->
-
+<!-- 交通方式页面 - 升级版 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>利川交通方式</title>
+  <title>利川交通方式 - 利川旅游指南</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Inter, system-ui, sans-serif; }
+    h1,h2,h3,h4,h5,h6,.font-display { font-family: 'Noto Serif SC','Montserrat',serif !important; }
+    body,p,span,a,li,input,textarea,select,button { font-family: 'Noto Sans SC','Inter',-apple-system,sans-serif; }
     .card-shadow { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
     .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .card-enhanced { transition: transform 0.4s cubic-bezier(.25,.46,.45,.94), box-shadow 0.4s ease; }
+    .card-enhanced:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    /* Navbar glass */
+    #navbar { transition: all 0.3s; }
+    #navbar.scrolled { background: rgba(255,255,255,0.88) !important; backdrop-filter: blur(20px); box-shadow: 0 1px 30px rgba(0,0,0,0.06); }
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* Back to top */
+    .back-to-top { position:fixed;bottom:32px;right:32px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#165DFF,#00B42A);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(22,93,255,.3);z-index:99;opacity:0;transform:translateY(20px);transition:all .35s;pointer-events:none; }
+    .back-to-top.show { opacity:1;transform:translateY(0);pointer-events:all; }
+    .back-to-top:hover { transform:translateY(-4px) scale(1.1); }
+    html { scroll-behavior: smooth; }
+    /* Hero gradient */
+    .page-hero { background: linear-gradient(135deg, #165DFF 0%, #00B42A 100%); position: relative; overflow: hidden; }
+    .page-hero::after { content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,0.06)'/%3E%3C/svg%3E"); }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+    .hero-anim { animation: fadeInUp 0.8s ease-out both; }
+    .hero-anim-d1 { animation-delay: 0.15s; }
+    .hero-anim-d2 { animation-delay: 0.3s; }
   </style>
 </head>
 <body class="bg-neutral-100 text-neutral-600 min-h-screen flex flex-col">
-  <!-- 顶部导航栏简化版 -->
-  <header class="w-full bg-white nav-shadow">
-    <div class="container mx-auto px-4 py-4 flex items-center">
-      <i class="fa fa-map-signs text-blue-600 text-2xl mr-2"></i>
-      <span class="text-xl font-bold font-display text-neutral-600">利川旅游指南</span>
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full bg-white z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-2 group">
+        <i class="fa fa-map-signs text-[#165DFF] text-2xl group-hover:scale-110 transition-transform"></i>
+        <h1 class="text-xl font-bold font-display text-neutral-600">利川旅游指南</h1>
+      </a>
+      <a href="../index.html" class="hidden md:flex items-center gap-2 text-sm text-neutral-700 font-medium hover:text-[#165DFF] transition-colors">
+        <i class="fa fa-home"></i> 返回首页
+      </a>
+      <button id="menu-toggle" class="md:hidden text-neutral-600"><i class="fa fa-bars text-xl"></i></button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-neutral-200">
+      <div class="container mx-auto px-4 py-3">
+        <a href="../index.html" class="block text-neutral-700 font-medium hover:text-[#165DFF] py-2"><i class="fa fa-home mr-2"></i>返回首页</a>
+      </div>
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-12 flex-1">
-    <div class="max-w-6xl mx-auto bg-white rounded-2xl card-shadow p-8">
-      <h1 class="text-3xl font-bold mb-8 text-blue-600 text-shadow text-center">利川交通方式</h1>
-      <ul class="space-y-8">
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-train text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">高铁/火车</h2></div>
-          <p class="text-neutral-600 text-center">利川站为沪渝高铁沿线重要站点，直达武汉、重庆、宜昌等地。
-            <a href="https://www.12306.cn/" class="text-blue-600 underline ml-2" target="_blank">12306官网查询</a>
-          </p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-bus text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">长途汽车</h2></div>
-          <p class="text-neutral-600 text-center">利川汽车客运站有发往恩施、武汉、重庆等地的班车。
-            <a href="http://m.hc12306.com/qiche/checi/1008.htm" class="text-blue-600 underline ml-2" target="_blank">汽车时刻表</a>
-          </p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-taxi text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">市内交通</h2></div>
-          <p class="text-neutral-600 text-center">市区可乘坐公交、出租车或网约车（如滴滴出行）。
-            <a href="https://www.didiglobal.com/" class="text-blue-600 underline ml-2" target="_blank">滴滴出行</a>
-          </p>
-        </li>
-        <li>
-          <div class="flex items-center mb-2 justify-center"><i class="fa fa-car text-blue-600 mr-3"></i><h2 class="text-xl font-semibold">自驾</h2></div>
-          <p class="text-neutral-600 text-center">利川市区及景区道路状况良好，导航可用高德地图、百度地图。
-            <a href="https://www.amap.com/" class="text-blue-600 underline ml-2" target="_blank">高德地图</a>
-            <a href="https://map.baidu.com/" class="text-blue-600 underline ml-2" target="_blank">百度地图</a>
-          </p>
-        </li>
-      </ul>
-      <div class="text-center mt-10">
-        <a href="../index.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-all font-medium shadow-md inline-block"><i class="fa fa-home mr-2"></i>返回首页</a>
+  <!-- Hero -->
+  <section class="page-hero pt-28 pb-16 md:pt-32 md:pb-20 text-center text-white">
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 hero-anim">
+        <i class="fa fa-info-circle"></i> 实用信息
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold font-display mb-4 hero-anim hero-anim-d1">利川交通方式</h1>
+      <p class="text-white/80 max-w-xl mx-auto hero-anim hero-anim-d2">多种出行方式任您选择，轻松抵达这座清凉之城</p>
+    </div>
+  </section>
+
+  <main class="container mx-auto px-4 py-16 flex-1">
+    <div class="max-w-4xl mx-auto">
+      <!-- 交通卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal">
+          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-train text-blue-600 text-2xl"></i>
+          </div>
+          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">高铁 / 火车</h2>
+          <p class="text-neutral-500 leading-relaxed mb-4">利川站为沪渝高铁沿线重要站点，直达武汉、重庆、宜昌等地，车次密集，出行方便。</p>
+          <div class="bg-neutral-50 rounded-xl p-4 mb-4">
+            <div class="flex items-center text-sm text-neutral-500 mb-1"><i class="fa fa-clock-o text-[#165DFF] mr-2"></i>武汉→利川 约4小时</div>
+            <div class="flex items-center text-sm text-neutral-500"><i class="fa fa-clock-o text-[#165DFF] mr-2"></i>重庆→利川 约2.5小时</div>
+          </div>
+          <a href="https://www.12306.cn/" target="_blank" class="inline-flex items-center text-[#165DFF] hover:text-[#165DFF]/80 font-medium transition-colors">
+            <i class="fa fa-external-link mr-2"></i>12306 官网查询
+          </a>
+        </div>
+
+        <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.1s">
+          <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-bus text-emerald-600 text-2xl"></i>
+          </div>
+          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">长途汽车</h2>
+          <p class="text-neutral-500 leading-relaxed mb-4">利川汽车客运站有发往恩施、武汉、重庆等地的班车，班次灵活，适合短途出行。</p>
+          <div class="bg-neutral-50 rounded-xl p-4 mb-4">
+            <div class="flex items-center text-sm text-neutral-500 mb-1"><i class="fa fa-map-marker text-[#165DFF] mr-2"></i>利川汽车客运站</div>
+            <div class="flex items-center text-sm text-neutral-500"><i class="fa fa-clock-o text-[#165DFF] mr-2"></i>恩施→利川 约1.5小时</div>
+          </div>
+          <a href="http://m.hc12306.com/qiche/checi/1008.htm" target="_blank" class="inline-flex items-center text-[#165DFF] hover:text-[#165DFF]/80 font-medium transition-colors">
+            <i class="fa fa-external-link mr-2"></i>汽车时刻表
+          </a>
+        </div>
+
+        <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.2s">
+          <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-taxi text-amber-600 text-2xl"></i>
+          </div>
+          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">市内交通</h2>
+          <p class="text-neutral-500 leading-relaxed mb-4">市区可乘坐公交、出租车或网约车（如滴滴出行），覆盖城区主要景点和交通枢纽。</p>
+          <div class="bg-neutral-50 rounded-xl p-4 mb-4">
+            <div class="flex items-center text-sm text-neutral-500 mb-1"><i class="fa fa-money text-[#165DFF] mr-2"></i>出租车起步价约 5-7 元</div>
+            <div class="flex items-center text-sm text-neutral-500"><i class="fa fa-mobile text-[#165DFF] mr-2"></i>推荐使用滴滴出行叫车</div>
+          </div>
+          <a href="https://www.didiglobal.com/" target="_blank" class="inline-flex items-center text-[#165DFF] hover:text-[#165DFF]/80 font-medium transition-colors">
+            <i class="fa fa-external-link mr-2"></i>滴滴出行
+          </a>
+        </div>
+
+        <div class="bg-white rounded-2xl card-shadow card-enhanced p-8 reveal" style="transition-delay:0.3s">
+          <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-5">
+            <i class="fa fa-car text-purple-600 text-2xl"></i>
+          </div>
+          <h2 class="text-xl font-bold font-display text-neutral-700 mb-3">自驾出行</h2>
+          <p class="text-neutral-500 leading-relaxed mb-4">利川市区及景区道路状况良好，自驾灵活度最高。导航推荐高德地图或百度地图。</p>
+          <div class="bg-neutral-50 rounded-xl p-4 mb-4">
+            <div class="flex items-center text-sm text-neutral-500 mb-1"><i class="fa fa-road text-[#165DFF] mr-2"></i>恩施→利川 沪渝高速 约80km</div>
+            <div class="flex items-center text-sm text-neutral-500"><i class="fa fa-exclamation-circle text-yellow-500 mr-2"></i>山区弯道多，谨慎驾驶</div>
+          </div>
+          <div class="flex gap-4">
+            <a href="https://www.amap.com/" target="_blank" class="inline-flex items-center text-[#165DFF] hover:text-[#165DFF]/80 font-medium transition-colors"><i class="fa fa-external-link mr-2"></i>高德地图</a>
+            <a href="https://map.baidu.com/" target="_blank" class="inline-flex items-center text-[#165DFF] hover:text-[#165DFF]/80 font-medium transition-colors"><i class="fa fa-external-link mr-2"></i>百度地图</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12 reveal">
+        <a href="../index.html" class="inline-flex items-center gap-2 bg-[#165DFF] hover:bg-[#165DFF]/90 text-white px-8 py-3.5 rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-500/20 font-medium">
+          <i class="fa fa-home"></i> 返回首页
+        </a>
       </div>
     </div>
   </main>
 
-  <!-- 底部区域简化版 -->
-  <footer class="bg-neutral-600 text-white py-8 mt-16">
+  <!-- Footer -->
+  <footer class="bg-gradient-to-b from-neutral-700 to-neutral-800 text-white py-12">
     <div class="container mx-auto px-4 text-center">
-      <div class="mb-4">
-        <span class="font-bold">利川旅游指南</span> | 实用信息
+      <div class="flex items-center justify-center gap-2 mb-3">
+        <i class="fa fa-map-signs text-[#165DFF]"></i>
+        <span class="font-bold font-display text-lg">利川旅游指南</span>
       </div>
-      <div class="text-neutral-300 text-sm">&copy; 2026 利川旅游指南. 保留所有权利.</div>
+      <p class="text-neutral-400 text-sm mb-6">您探索中国美丽城市利川的综合指南</p>
+      <div class="flex justify-center gap-6 mb-6">
+        <a href="../index.html" class="text-neutral-400 hover:text-white transition-colors text-sm">首页</a>
+        <a href="traffic.html" class="text-neutral-400 hover:text-white transition-colors text-sm">交通</a>
+        <a href="safety.html" class="text-neutral-400 hover:text-white transition-colors text-sm">安全</a>
+        <a href="faq.html" class="text-neutral-400 hover:text-white transition-colors text-sm">FAQ</a>
+        <a href="contact.html" class="text-neutral-400 hover:text-white transition-colors text-sm">联系</a>
+      </div>
+      <div class="border-t border-neutral-600 pt-4 text-neutral-500 text-xs">&copy; 2026 利川旅游指南. 保留所有权利.</div>
     </div>
   </footer>
+
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M10 4L4 10M10 4L16 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <script>
+    document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+      document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 400);
+    }, { passive: true });
+    const obs = new IntersectionObserver(e => e.forEach(i => { if (i.isIntersecting) i.target.classList.add('visible'); }), { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
 </body>
 </html>

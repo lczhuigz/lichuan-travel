@@ -67,3 +67,24 @@ INSERT INTO reviews (name, email, rating, visited_place, review_text, status) VA
 ('王五', 'wangwu@example.com', 5, '佛宝山', '佛宝山的瀑布群很美，空气清新，适合休闲度假。', 'approved'),
 ('赵六', 'zhaoliu@example.com', 5, '大水井古建筑群', '古建筑保存完好，很有历史感，导游讲解很详细。', 'approved'),
 ('钱七', 'qianqi@example.com', 4, '齐岳山', '高山草原风光独特，夏天很凉快，适合露营。', 'approved');
+
+-- 留言表
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    contact VARCHAR(255) NOT NULL,
+    subject VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'unread' CHECK (status IN ('unread', 'read', 'replied')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status);
+CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at DESC);
+
+DROP TRIGGER IF EXISTS update_messages_updated_at ON messages;
+CREATE TRIGGER update_messages_updated_at
+    BEFORE UPDATE ON messages
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
