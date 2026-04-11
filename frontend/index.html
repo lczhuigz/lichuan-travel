@@ -478,6 +478,34 @@
     background: white;
   }
 
+  /* Route output slim scrollbar */
+  #route-output::-webkit-scrollbar { width: 5px; }
+  #route-output::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 3px; }
+  #route-output::-webkit-scrollbar-thumb { background: #c0c4cc; border-radius: 3px; }
+  #route-output::-webkit-scrollbar-thumb:hover { background: #909399; }
+
+  /* ====== Equal-height grid cards ====== */
+  .grid > .card-shadow,
+  .grid > .bg-white.rounded-xl.overflow-hidden {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .grid > .card-shadow > .p-6,
+  .grid > .bg-white.rounded-xl.overflow-hidden > .p-6 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .grid > .card-shadow > .p-6 > a:last-child,
+  .grid > .bg-white.rounded-xl.overflow-hidden > .p-6 > a:last-child {
+    margin-top: auto;
+  }
+  .grid > .card-shadow > .p-6 > .space-y-3,
+  .grid > .bg-white.rounded-xl.overflow-hidden > .p-6 > .space-y-3 {
+    flex: 1;
+  }
+
   /* ====== Responsive tweaks ====== */
   @media (max-width: 768px) {
     .hero-section::after { height: 60px; }
@@ -518,7 +546,6 @@
         <a href="#food" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">美食</a>
         <a href="#orders" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">订单</a>
         <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">路线规划</a>
-        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">淡季路线规划</a>
         <a href="#culture" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">文化</a>
       </nav>
       
@@ -534,8 +561,8 @@
         <a href="#attractions" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">景点</a>
         <a href="#homestays" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">民宿</a>
         <a href="#food" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">美食</a>
+        <a href="#orders" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">订单</a>
         <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">路线规划</a>
-        <a href="#custom-route" class="text-neutral-600 hover:text-primary transition-colors font-medium font-display">淡季路线规划</a>
         <a href="#culture" class="text-neutral-600 hover:text-primary transition-colors py-2 font-medium font-display">文化</a>
       </div>
     </div>
@@ -2134,8 +2161,14 @@
             <p class="text-neutral-600">正在加载游客评价...</p>
           </div>
         </div>
-        <div class="text-center mt-6">
-          <button id="toggle-reviews" class="hidden bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors duration-300">查看更多评价</button>
+        <div id="reviews-pagination" class="hidden flex items-center justify-center gap-4 mt-6">
+          <button id="prev-page" class="bg-white border border-primary text-primary hover:bg-primary/5 px-5 py-2.5 rounded-lg transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+            <i class="fa fa-chevron-left mr-1"></i> 上一页
+          </button>
+          <span id="page-info" class="text-neutral-500 font-medium">1 / 1</span>
+          <button id="next-page" class="bg-white border border-primary text-primary hover:bg-primary/5 px-5 py-2.5 rounded-lg transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+            下一页 <i class="fa fa-chevron-right ml-1"></i>
+          </button>
         </div>
       </div>
       </div>
@@ -2156,10 +2189,10 @@
           <p class="text-lg text-neutral-500 max-w-2xl mx-auto font-sans">展示当前订单数据，并提交您的旅行预订请求。</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="space-y-6">
-          <div class="bg-neutral-50 rounded-3xl p-8 shadow-sm">
-            <div x-data="{ showAllOrders: false }">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+        <div class="space-y-6 flex flex-col">
+          <div class="bg-neutral-50 rounded-3xl p-8 shadow-sm flex-1">
+            <div>
               <h3 class="text-xl font-semibold text-neutral-700 mb-4">最新订单展示</h3>
               <template x-if="orders.length === 0">
                 <div class="text-center py-10 text-neutral-500">
@@ -2167,7 +2200,7 @@
                   <p>暂无订单数据，欢迎提交第一笔订单。</p>
                 </div>
               </template>
-              <template x-for="(order, idx) in showAllOrders ? orders : orders.slice(0,2)" :key="order.id">
+              <template x-for="(order, idx) in pagedOrders" :key="order.id">
                 <div class="bg-white rounded-3xl p-5 mb-4 border border-neutral-200">
                   <div class="flex items-start justify-between gap-3">
                     <div>
@@ -2186,9 +2219,13 @@
                   </div>
                 </div>
               </template>
-              <div class="text-center mt-4" x-show="orders.length > 2">
-                <button @click="showAllOrders = !showAllOrders" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors duration-300">
-                  <span x-text="showAllOrders ? '收起订单' : '查看更多订单'"></span>
+              <div class="flex items-center justify-center gap-4 mt-4" x-show="totalOrderPages > 1">
+                <button @click="orderPagePrev()" :disabled="currentOrderPage <= 1" class="bg-white border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <i class="fa fa-chevron-left mr-1"></i> 上一页
+                </button>
+                <span class="text-neutral-500 font-medium" x-text="currentOrderPage + ' / ' + totalOrderPages"></span>
+                <button @click="orderPageNext()" :disabled="currentOrderPage >= totalOrderPages" class="bg-white border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                  下一页 <i class="fa fa-chevron-right ml-1"></i>
                 </button>
               </div>
             </div>
@@ -2399,7 +2436,7 @@
           <div>
             <h3 class="text-xl font-bold font-display text-neutral-600 mb-6">您的专属路线</h3>
             
-            <div id="route-output" class="bg-neutral-50 rounded-lg p-6 min-h-[400px]">
+            <div id="route-output" class="bg-neutral-50 rounded-lg p-6 min-h-[400px] max-h-[500px] overflow-y-auto scrollbar-thin">
               <div class="text-center text-neutral-500">
                 <i class="fa fa-map-o text-4xl mb-4"></i>
                 <p>请选择您的偏好并点击"生成路线"查看您的个性化旅行计划</p>
@@ -2838,7 +2875,8 @@
     // ============ 评论系统代码 ============
     
     let reviewsData = [];
-    let reviewsExpanded = false;
+    let currentPage = 1;
+    const perPage = 3;
 
     // 等待页面加载完成
     (function() {
@@ -2901,26 +2939,18 @@
       // 2. 加载评价列表
       async function loadReviews() {
         const container = document.getElementById('reviews-container');
-        const toggleBtn = document.getElementById('toggle-reviews');
+        const paginationDiv = document.getElementById('reviews-pagination');
         if (!container) return;
-        reviewsExpanded = false;
+        currentPage = 1;
 
         try {
-          const response = await fetch('/api/reviews?page=1&limit=10');
+          const response = await fetch('/api/reviews?page=1&limit=50');
           const result = await response.json();
 
           if (result.success && result.data.length > 0) {
             reviewsData = result.data;
             renderReviews();
-
-            if (toggleBtn) {
-              if (reviewsData.length > 2) {
-                toggleBtn.classList.remove('hidden');
-                toggleBtn.textContent = '查看更多评价';
-              } else {
-                toggleBtn.classList.add('hidden');
-              }
-            }
+            updatePagination();
           } else {
             container.innerHTML = `
               <div class="text-center py-12">
@@ -2928,7 +2958,7 @@
                 <p class="text-neutral-500">暂无评价，来分享您的利川之旅吧！</p>
               </div>
             `;
-            if (toggleBtn) toggleBtn.classList.add('hidden');
+            if (paginationDiv) paginationDiv.classList.add('hidden');
           }
         } catch (error) {
           console.error('Error loading reviews:', error);
@@ -2938,7 +2968,7 @@
               <p class="text-red-500">加载评价失败，请稍后重试</p>
             </div>
           `;
-          if (toggleBtn) toggleBtn.classList.add('hidden');
+          if (paginationDiv) paginationDiv.classList.add('hidden');
         }
       }
 
@@ -2946,7 +2976,9 @@
         const container = document.getElementById('reviews-container');
         if (!container) return;
 
-        const displayReviews = reviewsExpanded ? reviewsData : reviewsData.slice(0, 2);
+        const start = (currentPage - 1) * perPage;
+        const end = start + perPage;
+        const displayReviews = reviewsData.slice(start, end);
         let reviewsHTML = '<div class="space-y-6">';
 
         displayReviews.forEach(review => {
@@ -2973,13 +3005,33 @@
         container.innerHTML = reviewsHTML;
       }
 
-      function toggleReviewExpand() {
-        reviewsExpanded = !reviewsExpanded;
-        renderReviews();
-        const toggleBtn = document.getElementById('toggle-reviews');
-        if (toggleBtn) {
-          toggleBtn.textContent = reviewsExpanded ? '收起评价' : '查看更多评价';
+      function updatePagination() {
+        const paginationDiv = document.getElementById('reviews-pagination');
+        const pageInfo = document.getElementById('page-info');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const totalPages = Math.ceil(reviewsData.length / perPage);
+
+        if (!paginationDiv) return;
+
+        if (totalPages <= 1) {
+          paginationDiv.classList.add('hidden');
+          return;
         }
+
+        paginationDiv.classList.remove('hidden');
+        pageInfo.textContent = `${currentPage} / ${totalPages}`;
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+      }
+
+      function goToPage(page) {
+        const totalPages = Math.ceil(reviewsData.length / perPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderReviews();
+        updatePagination();
+        document.getElementById('reviews-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
       
       // 生成星星
@@ -3002,7 +3054,8 @@
         });
       });
       
-      document.getElementById('toggle-reviews')?.addEventListener('click', toggleReviewExpand);
+      document.getElementById('prev-page')?.addEventListener('click', () => goToPage(currentPage - 1));
+      document.getElementById('next-page')?.addEventListener('click', () => goToPage(currentPage + 1));
       
       // 初始加载评价
       loadReviews();
@@ -3015,6 +3068,21 @@
         pendingOrders: 0,
         confirmedOrders: 0,
         completedOrders: 0,
+        currentOrderPage: 1,
+        orderPerPage: 2,
+        get pagedOrders() {
+          const start = (this.currentOrderPage - 1) * this.orderPerPage;
+          return this.orders.slice(start, start + this.orderPerPage);
+        },
+        get totalOrderPages() {
+          return Math.ceil(this.orders.length / this.orderPerPage) || 1;
+        },
+        orderPagePrev() {
+          if (this.currentOrderPage > 1) this.currentOrderPage--;
+        },
+        orderPageNext() {
+          if (this.currentOrderPage < this.totalOrderPages) this.currentOrderPage++;
+        },
         form: {
           customer_name: '',
           contact: '',
@@ -3041,6 +3109,7 @@
               this.pendingOrders = this.orders.filter(o => o.status === 'pending').length;
               this.confirmedOrders = this.orders.filter(o => o.status === 'confirmed').length;
               this.completedOrders = this.orders.filter(o => o.status === 'completed').length;
+              this.currentOrderPage = 1;
             }
           } catch (error) {
             console.error('加载订单失败:', error);
