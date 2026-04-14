@@ -10,122 +10,430 @@
     <style>
       h1,h2,h3,h4,h5,h6 { font-family: 'Noto Serif SC',serif !important; }
       body,input,button,label { font-family: 'Noto Sans SC',sans-serif; }
-      @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-      .login-anim { animation: fadeInUp 0.7s ease-out both; }
-      .login-anim-d1 { animation-delay: 0.15s; }
-      .login-anim-d2 { animation-delay: 0.3s; }
-      .login-anim-d3 { animation-delay: 0.45s; }
-      /* Deep gradient background */
-      .bg-login {
+
+      /* ═══ Layout ═══ */
+      .page { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; overflow: hidden; }
+      @media (max-width: 768px) { .page { grid-template-columns: 1fr; } .left-panel { display: none !important; } }
+
+      /* ═══ Left Panel ═══ */
+      .left-panel {
+        position: relative; display: flex; flex-direction: column;
+        justify-content: space-between;
         background: linear-gradient(135deg, #0d2b6e 0%, #165DFF 30%, #0a7e4d 70%, #064e3b 100%);
-        position: relative;
-        min-height: 100vh;
+        padding: 48px; overflow: hidden;
       }
-      .bg-login::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
+      .left-panel::before {
+        content: ''; position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+        background-size: 20px 20px;
       }
-      /* Floating orbs */
+      .glow-orb {
+        position: absolute; border-radius: 50%; pointer-events: none;
+        animation: float 7s ease-in-out infinite;
+      }
       @keyframes float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-20px) scale(1.05)} }
-      .orb { animation: float 7s ease-in-out infinite; border-radius: 50%; position: absolute; pointer-events: none; }
-      .orb-1 { width: 300px; height: 300px; top: -80px; left: -60px; background: radial-gradient(circle, rgba(22,93,255,0.3), transparent 70%); }
-      .orb-2 { width: 200px; height: 200px; bottom: -40px; right: -30px; background: radial-gradient(circle, rgba(0,180,42,0.25), transparent 70%); animation-delay: 2s; animation-duration: 8s; }
-      .orb-3 { width: 150px; height: 150px; top: 40%; right: 15%; background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%); animation-delay: 4s; animation-duration: 6s; }
-      /* Button pulse */
-      @keyframes btnPulse { 0%,100%{box-shadow:0 4px 24px rgba(22,93,255,0.4)} 50%{box-shadow:0 4px 36px rgba(22,93,255,0.6)} }
-      .btn-pulse { animation: btnPulse 2.5s ease-in-out infinite; }
+      .glow-1 { width: 300px; height: 300px; top: -80px; left: -60px; background: radial-gradient(circle, rgba(22,93,255,0.3), transparent 70%); }
+      .glow-2 { width: 200px; height: 200px; bottom: -40px; right: -30px; background: radial-gradient(circle, rgba(0,180,42,0.25), transparent 70%); animation-delay: 2s; animation-duration: 8s; }
+
+      .logo { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: #fff; text-decoration: none; }
+      .logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,.15); backdrop-filter: blur(4px); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+      .stage { position: relative; z-index: 2; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
+      .footer-links { position: relative; z-index: 2; display: flex; gap: 32px; font-size: 13px; color: rgba(255,255,255,.5); }
+      .footer-links a { color: inherit; text-decoration: none; transition: color .2s; }
+      .footer-links a:hover { color: rgba(255,255,255,.9); }
+
+      /* ═══ Animated Characters ═══ */
+      .characters { position: relative; width: 480px; height: 360px; }
+      .char { position: absolute; bottom: 0; transform-origin: bottom center; transition: transform .7s ease-in-out, height .7s ease-in-out; }
+      .char-purple { left: 60px; width: 160px; height: 360px; background: #6C3FF5; border-radius: 10px 10px 0 0; z-index: 1; }
+      .char-black { left: 210px; width: 110px; height: 280px; background: #2D2D2D; border-radius: 8px 8px 0 0; z-index: 2; }
+      .char-orange { left: 0; width: 210px; height: 180px; background: #FF9B6B; border-radius: 105px 105px 0 0; z-index: 3; }
+      .char-yellow { left: 270px; width: 140px; height: 225px; background: #E8D754; border-radius: 70px 70px 0 0; z-index: 4; }
+
+      .eyes { position: absolute; display: flex; transition: left .7s ease-in-out, top .7s ease-in-out; }
+      .eye { background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: height .15s; }
+      .pupil { background: #2D2D2D; border-radius: 50%; transition: transform .1s ease-out; }
+      .pure-pupil { background: #2D2D2D; border-radius: 50%; transition: transform .1s ease-out; }
+      .mouth { position: absolute; height: 4px; background: #2D2D2D; border-radius: 100px; transition: left .2s ease-out, top .2s ease-out; }
+
+      /* purple eyes */
+      .char-purple .eyes { gap: 28px; left: 40px; top: 35px; }
+      .char-purple .eye { width: 16px; height: 16px; }
+      .char-purple .pupil { width: 6px; height: 6px; }
+      /* black eyes */
+      .char-black .eyes { gap: 22px; left: 24px; top: 28px; }
+      .char-black .eye { width: 14px; height: 14px; }
+      .char-black .pupil { width: 5px; height: 5px; }
+      /* orange pupils */
+      .char-orange .eyes { gap: 28px; left: 72px; top: 80px; }
+      .char-orange .pure-pupil { width: 11px; height: 11px; }
+      /* yellow */
+      .char-yellow .eyes { gap: 24px; left: 52px; top: 40px; transition: left .2s ease-out, top .2s ease-out; }
+      .char-yellow .pure-pupil { width: 12px; height: 12px; }
+      .char-yellow .mouth { width: 60px; left: 40px; top: 88px; transition: left .2s ease-out, top .2s ease-out; }
+
+      /* ═══ Right Panel ═══ */
+      .right-panel { display: flex; align-items: center; justify-content: center; padding: 32px; background: #F5F7FA; }
+
+      /* ═══ Login Card ═══ */
+      .login-card {
+        width: 100%; max-width: 420px; background: #fff; border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.08); padding: 40px;
+      }
+      @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+      .anim { animation: fadeInUp .6s ease-out both; }
+      .anim-d1 { animation-delay: .12s; }
+      .anim-d2 { animation-delay: .24s; }
+      .anim-d3 { animation-delay: .36s; }
+
+      .mobile-logo { display: none; align-items: center; justify-content: center; gap: 8px; font-size: 18px; font-weight: 600; margin-bottom: 36px; color: #1f2937; }
+      @media (max-width: 768px) { .mobile-logo { display: flex; } }
+      .mobile-logo-icon { width: 36px; height: 36px; background: #165DFF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; }
+
+      .input-group { margin-bottom: 20px; }
+      .input-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #374151; }
+      .input-wrap { position: relative; }
+      .input-wrap .fa-lock { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; z-index: 1; }
+      .input-wrap .fa-user { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; }
+      .input-wrap input {
+        width: 100%; height: 48px; padding: 0 16px 0 40px;
+        border: 1px solid #e5e7eb; border-radius: 12px; font-size: 14px; color: #1f2937;
+        outline: none; transition: border-color .2s, box-shadow .2s; background: #fff;
+      }
+      .input-wrap input:focus { border-color: #165DFF; box-shadow: 0 0 0 3px rgba(22,93,255,.12); }
+      .input-wrap input::placeholder { color: #9ca3af; }
+      .toggle-pw {
+        position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+        background: none; border: none; color: #9ca3af; cursor: pointer;
+        padding: 10px; z-index: 2; border-radius: 8px; transition: color .2s;
+      }
+      .toggle-pw:hover { color: #374151; }
+
+      .error-box { padding: 12px; font-size: 13px; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; margin-bottom: 16px; display: none; }
+      .error-box.show { display: flex; align-items: center; gap: 6px; }
+
+      .btn-login {
+        width: 100%; height: 48px; border: none; border-radius: 12px;
+        background: #165DFF; color: #fff; font-size: 15px; font-weight: 700;
+        cursor: pointer; transition: all .25s;
+        box-shadow: 0 4px 24px rgba(22,93,255,.4);
+        animation: btnPulse 2.5s ease-in-out infinite;
+      }
+      @keyframes btnPulse { 0%,100%{box-shadow:0 4px 24px rgba(22,93,255,.4)} 50%{box-shadow:0 4px 36px rgba(22,93,255,.6)} }
+      .btn-login:hover { background: #1248CC; transform: scale(1.02); }
+      .btn-login:active { transform: scale(0.98); }
+      .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; animation: none; }
+
+      .footer-text { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 24px; }
     </style>
 </head>
-<body class="bg-login flex items-center justify-center p-4">
-    <!-- Floating orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<body>
+<div class="page">
+  <!-- ═══ LEFT: Animated Characters ═══ -->
+  <div class="left-panel">
+    <a href="/" class="logo">
+      <div class="logo-icon"><i class="fa fa-map-signs"></i></div>
+      <span>利川旅游指南</span>
+    </a>
 
-    <div class="relative z-10 w-full max-w-md">
-        <!-- Login Card -->
-        <div class="bg-white rounded-3xl shadow-2xl shadow-black/20 p-8 md:p-10 login-anim">
-            <div class="text-center mb-8 login-anim-d1">
-                <!-- Logo: solid dark background for high contrast -->
-                <div class="w-16 h-16 bg-[#165DFF] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/40">
-                    <i class="fa fa-map-signs text-white text-2xl"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-neutral-800 mb-1">管理后台</h1>
-                <p class="text-neutral-500 text-sm">利川旅游指南 · 管理系统</p>
-            </div>
-            
-            <div id="error-message" class="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-5 hidden text-sm">
-                <i class="fa fa-exclamation-circle mr-1"></i> <span id="error-text"></span>
-            </div>
-            
-            <form id="login-form" class="space-y-5 login-anim-d2">
-                <div>
-                    <label class="block text-neutral-700 font-medium mb-2 text-sm">用户名</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"><i class="fa fa-user"></i></span>
-                        <input type="text" id="username" class="w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all text-neutral-800 placeholder:text-neutral-400" placeholder="请输入用户名" required>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-neutral-700 font-medium mb-2 text-sm">密码</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"><i class="fa fa-lock"></i></span>
-                        <input type="password" id="password" class="w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all text-neutral-800 placeholder:text-neutral-400" placeholder="请输入密码" required>
-                    </div>
-                </div>
-                
-                <!-- Login button: solid, high contrast, pulse glow -->
-                <button type="submit" id="login-btn" class="w-full bg-[#165DFF] hover:bg-[#1248CC] text-white py-3.5 rounded-xl transition-all font-bold text-base shadow-lg btn-pulse transform hover:scale-[1.02] active:scale-[0.98] login-anim-d3">
-                    <i class="fa fa-sign-in mr-2"></i> 登 录
-                </button>
-            </form>
+    <div class="stage">
+      <div class="characters" id="characters">
+        <!-- Purple -->
+        <div class="char char-purple" id="char-purple">
+          <div class="eyes" id="purple-eyes">
+            <div class="eye" id="purple-eye-l"><div class="pupil" id="purple-pupil-l"></div></div>
+            <div class="eye" id="purple-eye-r"><div class="pupil" id="purple-pupil-r"></div></div>
+          </div>
         </div>
-
-        <!-- Footer -->
-        <p class="text-center text-white/50 text-xs mt-6 login-anim-d3">© 2026 利川旅游指南 · 内部管理系统</p>
+        <!-- Black -->
+        <div class="char char-black" id="char-black">
+          <div class="eyes" id="black-eyes">
+            <div class="eye" id="black-eye-l"><div class="pupil" id="black-pupil-l"></div></div>
+            <div class="eye" id="black-eye-r"><div class="pupil" id="black-pupil-r"></div></div>
+          </div>
+        </div>
+        <!-- Orange -->
+        <div class="char char-orange" id="char-orange">
+          <div class="eyes" id="orange-eyes">
+            <div class="pure-pupil" id="orange-pupil-l"></div>
+            <div class="pure-pupil" id="orange-pupil-r"></div>
+          </div>
+        </div>
+        <!-- Yellow -->
+        <div class="char char-yellow" id="char-yellow">
+          <div class="eyes" id="yellow-eyes">
+            <div class="pure-pupil" id="yellow-pupil-l"></div>
+            <div class="pure-pupil" id="yellow-pupil-r"></div>
+          </div>
+          <div class="mouth" id="yellow-mouth"></div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('error-message');
-            const errorText = document.getElementById('error-text');
-            const loginBtn = document.getElementById('login-btn');
-            
-            errorMsg.classList.add('hidden');
-            loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 登录中...';
-            loginBtn.disabled = true;
-            
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
-                    window.location.href = 'dashboard.html';
-                } else {
-                    errorText.textContent = result.message || '用户名或密码错误';
-                    errorMsg.classList.remove('hidden');
-                }
-            } catch (error) {
-                errorText.textContent = '网络错误，请稍后重试';
-                errorMsg.classList.remove('hidden');
-            } finally {
-                loginBtn.innerHTML = '<i class="fa fa-sign-in mr-2"></i> 登 录';
-                loginBtn.disabled = false;
-            }
-        });
-    </script>
+    <div class="footer-links">
+      <a href="/">返回首页</a>
+      <a href="#">隐私政策</a>
+    </div>
+    <div class="glow-orb glow-1"></div>
+    <div class="glow-orb glow-2"></div>
+  </div>
+
+  <!-- ═══ RIGHT: Login Form ═══ -->
+  <div class="right-panel">
+    <div class="login-card">
+      <div class="mobile-logo">
+        <div class="mobile-logo-icon"><i class="fa fa-map-signs"></i></div>
+        <span>利川旅游指南</span>
+      </div>
+
+      <div class="text-center mb-8 anim">
+        <div class="w-16 h-16 bg-[#165DFF] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/30">
+          <i class="fa fa-shield text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800 mb-1">管理后台</h1>
+        <p class="text-gray-400 text-sm">利川旅游指南 · 管理系统</p>
+      </div>
+
+      <div class="error-box" id="error-box">
+        <i class="fa fa-exclamation-circle"></i>
+        <span id="error-text"></span>
+      </div>
+
+      <form id="login-form" class="anim anim-d1">
+        <div class="input-group">
+          <label for="username">用户名</label>
+          <div class="input-wrap">
+            <i class="fa fa-user"></i>
+            <input type="text" id="username" placeholder="请输入用户名" required autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="password">密码</label>
+          <div class="input-wrap">
+            <i class="fa fa-lock"></i>
+            <input type="password" id="password" placeholder="请输入密码" required autocomplete="current-password" style="padding-right:44px" />
+            <button type="button" class="toggle-pw" id="toggle-pw">
+              <i class="fa fa-eye" id="pw-icon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login anim anim-d2" id="login-btn">
+          <i class="fa fa-sign-in mr-2"></i> 登 录
+        </button>
+      </form>
+
+      <p class="footer-text anim anim-d3">© 2026 利川旅游指南 · 内部管理系统</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ═══════════════════════════════
+     STATE
+  ═══════════════════════════════ */
+  let mouseX = 0, mouseY = 0, isTyping = false, showPassword = false, passwordLength = 0;
+  let isLookingAtEachOther = false, isPurplePeeking = false;
+  let purpleBlinking = false, blackBlinking = false;
+
+  /* ═══════════════════════════════
+     ELEMENTS
+  ═══════════════════════════════ */
+  const $ = s => document.querySelector(s);
+  const chars = { purple: $('#char-purple'), black: $('#char-black'), orange: $('#char-orange'), yellow: $('#char-yellow') };
+  const eyes = {
+    purple: { container: $('#purple-eyes'), eyeL: $('#purple-eye-l'), eyeR: $('#purple-eye-r'), pupilL: $('#purple-pupil-l'), pupilR: $('#purple-pupil-r') },
+    black:  { container: $('#black-eyes'),  eyeL: $('#black-eye-l'),  eyeR: $('#black-eye-r'),  pupilL: $('#black-pupil-l'),  pupilR: $('#black-pupil-r') },
+    orange: { container: $('#orange-eyes'), pupilL: $('#orange-pupil-l'), pupilR: $('#orange-pupil-r') },
+    yellow: { container: $('#yellow-eyes'), pupilL: $('#yellow-pupil-l'), pupilR: $('#yellow-pupil-r'), mouth: $('#yellow-mouth') },
+  };
+
+  /* ═══════════════════════════════
+     MOUSE
+  ═══════════════════════════════ */
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+  function getCenter(el) { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+  function calcPupil(el, max) { const c = getCenter(el), dx = mouseX - c.x, dy = mouseY - c.y, d = Math.min(Math.sqrt(dx*dx+dy*dy), max), a = Math.atan2(dy, dx); return { x: Math.cos(a)*d, y: Math.sin(a)*d }; }
+  function calcSkew(ref) { const c = getCenter(ref); return Math.max(-6, Math.min(6, -(mouseX - c.x) / 120)); }
+  function calcFace(ref) { const c = getCenter(ref); return { x: Math.max(-15, Math.min(15, (mouseX - c.x) / 20)), y: Math.max(-10, Math.min(10, (mouseY - c.y) / 30)) }; }
+
+  /* ═══════════════════════════════
+     BLINK
+  ═══════════════════════════════ */
+  function scheduleBlink(fn) { const d = Math.random()*4000+3000; setTimeout(() => { fn(true); setTimeout(() => { fn(false); scheduleBlink(fn); }, 150); }, d); }
+  scheduleBlink(v => purpleBlinking = v);
+  scheduleBlink(v => blackBlinking = v);
+
+  /* ═══════════════════════════════
+     PEEK
+  ═══════════════════════════════ */
+  function schedulePeek() {
+    if (passwordLength > 0 && showPassword) {
+      setTimeout(() => { isPurplePeeking = true; setTimeout(() => { isPurplePeeking = false; schedulePeek(); }, 800); }, Math.random()*3000+2000);
+    }
+  }
+
+  /* ═══════════════════════════════
+     RENDER LOOP
+  ═══════════════════════════════ */
+  function render() {
+    const isHiding = passwordLength > 0 && !showPassword;
+    const isShowing = passwordLength > 0 && showPassword;
+
+    // ── Purple ──
+    const ps = calcSkew(chars.purple), pf = calcFace(chars.purple);
+    if (isShowing) {
+      chars.purple.style.transform = 'skewX(0deg)'; chars.purple.style.height = '360px';
+      eyes.purple.container.style.left = '18px'; eyes.purple.container.style.top = '30px';
+      const px = isPurplePeeking ? 4 : -4, py = isPurplePeeking ? 5 : -4;
+      eyes.purple.pupilL.style.transform = `translate(${px}px,${py}px)`;
+      eyes.purple.pupilR.style.transform = `translate(${px}px,${py}px)`;
+    } else if (isTyping || isHiding) {
+      chars.purple.style.transform = `skewX(${ps-12}deg) translateX(35px)`; chars.purple.style.height = '395px';
+      if (isLookingAtEachOther) {
+        eyes.purple.container.style.left = '48px'; eyes.purple.container.style.top = '55px';
+        eyes.purple.pupilL.style.transform = 'translate(3px,4px)'; eyes.purple.pupilR.style.transform = 'translate(3px,4px)';
+      } else {
+        eyes.purple.container.style.left = `${40+pf.x}px`; eyes.purple.container.style.top = `${35+pf.y}px`;
+        const o = calcPupil(eyes.purple.eyeL, 5); eyes.purple.pupilL.style.transform = `translate(${o.x}px,${o.y}px)`;
+        const o2 = calcPupil(eyes.purple.eyeR, 5); eyes.purple.pupilR.style.transform = `translate(${o2.x}px,${o2.y}px)`;
+      }
+    } else {
+      chars.purple.style.transform = `skewX(${ps}deg)`; chars.purple.style.height = '360px';
+      eyes.purple.container.style.left = `${40+pf.x}px`; eyes.purple.container.style.top = `${35+pf.y}px`;
+      const o = calcPupil(eyes.purple.eyeL, 5); eyes.purple.pupilL.style.transform = `translate(${o.x}px,${o.y}px)`;
+      const o2 = calcPupil(eyes.purple.eyeR, 5); eyes.purple.pupilR.style.transform = `translate(${o2.x}px,${o2.y}px)`;
+    }
+    eyes.purple.eyeL.style.height = purpleBlinking ? '2px' : '16px';
+    eyes.purple.eyeR.style.height = purpleBlinking ? '2px' : '16px';
+
+    // ── Black ──
+    const bs = calcSkew(chars.black), bf = calcFace(chars.black);
+    if (isShowing) {
+      chars.black.style.transform = 'skewX(0deg)';
+      eyes.black.container.style.left = '9px'; eyes.black.container.style.top = '24px';
+      eyes.black.pupilL.style.transform = 'translate(-4px,-4px)'; eyes.black.pupilR.style.transform = 'translate(-4px,-4px)';
+    } else if (isLookingAtEachOther) {
+      chars.black.style.transform = `skewX(${bs*1.5+10}deg) translateX(18px)`;
+      eyes.black.container.style.left = '28px'; eyes.black.container.style.top = '10px';
+      eyes.black.pupilL.style.transform = 'translate(0,-4px)'; eyes.black.pupilR.style.transform = 'translate(0,-4px)';
+    } else {
+      chars.black.style.transform = isTyping || isHiding ? `skewX(${bs*1.5}deg)` : `skewX(${bs}deg)`;
+      eyes.black.container.style.left = `${24+bf.x}px`; eyes.black.container.style.top = `${28+bf.y}px`;
+      const o = calcPupil(eyes.black.eyeL, 4); eyes.black.pupilL.style.transform = `translate(${o.x}px,${o.y}px)`;
+      const o2 = calcPupil(eyes.black.eyeR, 4); eyes.black.pupilR.style.transform = `translate(${o2.x}px,${o2.y}px)`;
+    }
+    eyes.black.eyeL.style.height = blackBlinking ? '2px' : '14px';
+    eyes.black.eyeR.style.height = blackBlinking ? '2px' : '14px';
+
+    // ── Orange ──
+    const os = calcSkew(chars.orange), of2 = calcFace(chars.orange);
+    if (isShowing) {
+      chars.orange.style.transform = 'skewX(0deg)';
+      eyes.orange.container.style.left = '44px'; eyes.orange.container.style.top = '75px';
+      eyes.orange.pupilL.style.transform = 'translate(-5px,-4px)'; eyes.orange.pupilR.style.transform = 'translate(-5px,-4px)';
+    } else {
+      chars.orange.style.transform = `skewX(${os}deg)`;
+      eyes.orange.container.style.left = `${72+of2.x}px`; eyes.orange.container.style.top = `${80+of2.y}px`;
+      const o = calcPupil(eyes.orange.pupilL, 5); eyes.orange.pupilL.style.transform = `translate(${o.x}px,${o.y}px)`;
+      const o2 = calcPupil(eyes.orange.pupilR, 5); eyes.orange.pupilR.style.transform = `translate(${o2.x}px,${o2.y}px)`;
+    }
+
+    // ── Yellow ──
+    const ys = calcSkew(chars.yellow), yf = calcFace(chars.yellow);
+    if (isShowing) {
+      chars.yellow.style.transform = 'skewX(0deg)';
+      eyes.yellow.container.style.left = '20px'; eyes.yellow.container.style.top = '35px';
+      eyes.yellow.pupilL.style.transform = 'translate(-5px,-4px)'; eyes.yellow.pupilR.style.transform = 'translate(-5px,-4px)';
+      eyes.yellow.mouth.style.left = '10px'; eyes.yellow.mouth.style.top = '88px';
+    } else {
+      chars.yellow.style.transform = `skewX(${ys}deg)`;
+      eyes.yellow.container.style.left = `${52+yf.x}px`; eyes.yellow.container.style.top = `${40+yf.y}px`;
+      const o = calcPupil(eyes.yellow.pupilL, 5); eyes.yellow.pupilL.style.transform = `translate(${o.x}px,${o.y}px)`;
+      const o2 = calcPupil(eyes.yellow.pupilR, 5); eyes.yellow.pupilR.style.transform = `translate(${o2.x}px,${o2.y}px)`;
+      eyes.yellow.mouth.style.left = `${40+yf.x}px`; eyes.yellow.mouth.style.top = `${88+yf.y}px`;
+    }
+
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+
+  /* ═══════════════════════════════
+     INPUT EVENTS
+  ═══════════════════════════════ */
+  const usernameInput = $('#username');
+  const passwordInput = $('#password');
+
+  usernameInput.addEventListener('focus', () => { isTyping = true; isLookingAtEachOther = true; setTimeout(() => isLookingAtEachOther = false, 800); });
+  usernameInput.addEventListener('blur', () => isTyping = false);
+  passwordInput.addEventListener('focus', () => { isTyping = true; isLookingAtEachOther = true; setTimeout(() => isLookingAtEachOther = false, 800); });
+  passwordInput.addEventListener('blur', () => isTyping = false);
+  passwordInput.addEventListener('input', () => {
+    passwordLength = passwordInput.value.length;
+    if (passwordLength > 0 && showPassword) schedulePeek();
+  });
+
+  // Toggle password visibility
+  $('#toggle-pw').addEventListener('click', () => {
+    showPassword = !showPassword;
+    passwordInput.type = showPassword ? 'text' : 'password';
+    $('#pw-icon').className = showPassword ? 'fa fa-eye-slash' : 'fa fa-eye';
+    if (showPassword && passwordLength > 0) schedulePeek();
+  });
+
+  /* ═══════════════════════════════
+     LOGIN (same API as original)
+  ═══════════════════════════════ */
+  const form = $('#login-form');
+  const errorBox = $('#error-box');
+  const errorText = $('#error-text');
+  const loginBtn = $('#login-btn');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!username || !password) {
+      errorText.textContent = '请输入用户名和密码';
+      errorBox.classList.add('show');
+      return;
+    }
+
+    errorBox.classList.remove('show');
+    loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 登录中...';
+    loginBtn.disabled = true;
+
+    try {
+      const resp = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const result = await resp.json();
+
+      if (result.success) {
+        sessionStorage.setItem('adminAuth', btoa(username + ':' + password));
+        window.location.href = 'dashboard.html';
+      } else {
+        errorText.textContent = result.message || '用户名或密码错误';
+        errorBox.classList.add('show');
+      }
+    } catch (err) {
+      errorText.textContent = '网络错误，请稍后重试';
+      errorBox.classList.add('show');
+    } finally {
+      loginBtn.innerHTML = '<i class="fa fa-sign-in mr-2"></i> 登 录';
+      loginBtn.disabled = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>
